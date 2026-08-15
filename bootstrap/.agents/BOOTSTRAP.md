@@ -2,9 +2,11 @@
 
 This file is temporary. Its presence means coding-agent setup is not complete.
 
+The canonical Markdown files installed beside it are temporary writing scaffolds. Rewrite them as concise, target-project-specific context; do not leave generic bootstrap prose in place indefinitely.
+
 ## Goal
 
-Inspect this repository, generate concise project-specific agent context, validate the important assumptions, then remove this file.
+Inspect the target repository, generate concise project-specific agent context, validate important assumptions, then remove this file.
 
 ## Procedure
 
@@ -14,10 +16,10 @@ Inspect this repository, generate concise project-specific agent context, valida
    - Discovered facts: directly observable in the repository.
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
-4. Identify the stack, canonical commands, architecture, important boundaries, existing conventions, useful presets, recurring procedures worth turning into skills, and useful MCP capabilities.
-5. Prefer existing project conventions over bootstrap defaults.
+4. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as skills, and useful MCP capabilities.
+5. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else.
 6. Ask the maintainer only for unresolved facts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-7. Populate or update:
+7. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -25,8 +27,8 @@ Inspect this repository, generate concise project-specific agent context, valida
    - `.agents/presets/`
    - `.agents/skills/`
    - `.agents/mcp/`
-8. Keep only project-relevant durable context. Remove unused presets, skills, and MCP capability files.
-9. Validate documented commands where practical before presenting them as canonical.
+8. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+9. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
 10. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
 11. Remove `.agents/BOOTSTRAP.md` after successful setup.
 
@@ -45,5 +47,6 @@ Inspect this repository, generate concise project-specific agent context, valida
 - Asking what language or framework the repository uses when manifests make that clear.
 - Treating presets as higher authority than the existing codebase.
 - Keeping every bootstrap preset in the target repository.
+- Leaving scaffold instructions in canonical files instead of replacing them with project facts.
 - Turning `.agents/TODO.md` into a per-task plan or product backlog.
 - Leaving this file in place after setup succeeds.

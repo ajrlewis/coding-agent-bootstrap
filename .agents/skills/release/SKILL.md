@@ -1,14 +1,9 @@
-# Release Skill
+# Release
 
-Use this skill when preparing, validating, or cutting a release.
+Use this procedure when publishing a bootstrap version.
 
-## Procedure
-
-1. Identify the project's release mechanism, versioning policy, and deployment boundary.
-2. Read recent changelog, commits, tags, CI results, and release documentation.
-3. Confirm the release branch or tag strategy before modifying version files.
-4. Run the full verification command from `.agents/COMMANDS.md`.
-5. Update release notes or changelog only with user-facing, relevant changes.
-6. Avoid bundling unrelated cleanup into release preparation.
-7. Confirm published artifacts, deployment status, or package metadata where the project expects it.
-8. Record deferred release risks or follow-up work in `.agents/TODO.md`.
+1. Confirm the payload schema change and choose the next `bootstrap/.agents/VERSION` value.
+2. Run the full verification documented in `.agents/COMMANDS.md`.
+3. Inspect the installed fixture, README installation instructions, and final diff.
+4. Confirm `main` contains the intended commit before creating a tag or release.
+5. Record user-visible behavior changes in release notes without unrelated cleanup.
