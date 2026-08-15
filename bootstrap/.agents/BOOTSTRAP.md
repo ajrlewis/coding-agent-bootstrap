@@ -6,20 +6,43 @@ The canonical Markdown files installed beside it are temporary writing scaffolds
 
 ## Goal
 
-Inspect the target repository, generate concise project-specific agent context, validate important assumptions, then remove this file.
+Inspect the target repository, reconcile any existing agent configuration, generate concise project-specific context, validate important assumptions, then remove temporary bootstrap state.
+
+## Existing Configuration Migration
+
+If `.coding-agent-bootstrap/existing/` exists, this repository had coding-agent configuration before bootstrap. Read all relevant preserved files before finalizing the canonical system.
+
+This directory is recoverable migration input, not durable project context. Do not commit it as the final configuration or remove it before reconciliation succeeds.
+
+1. Treat preserved configuration as project-specific source material.
+2. Preserve useful project intent and unresolved requirements.
+3. Migrate durable information into its natural canonical location:
+   - exact commands into `.agents/COMMANDS.md`;
+   - development process into `.agents/WORKFLOW.md`;
+   - system boundaries and invariants into `.agents/ARCHITECTURE.md`;
+   - persistent deferred work into `.agents/TODO.md`;
+   - adopted stack or workflow conventions into `.agents/presets/`;
+   - reusable task procedures into `.agents/skills/`;
+   - desired external capabilities into `.agents/mcp/`.
+4. Deduplicate compatible information instead of repeating it across files.
+5. Existing repository conventions take precedence over generic presets.
+6. Do not discard rules merely because bootstrap defaults differ.
+7. Never silently resolve conflicting behavioral or workflow policies. Identify their likely sources, ask the maintainer when intent is unclear, and preserve existing project-specific intent until resolved.
+8. Remove `.coding-agent-bootstrap/` only after migration and validation are complete.
 
 ## Procedure
 
 1. Inspect before asking. Do not ask questions the repository can answer.
 2. Read likely sources of truth: package manifests, lockfiles, build config, CI config, Docker files, test config, linter/formatter config, Makefiles or task runners, source layout, docs, migrations, deployment config, and Git history where useful.
-3. Classify what you learn:
+3. Deliberately inspect existing agent guidance beyond the paths preserved by the installer, such as `.cursor/`, `.github/copilot-instructions.md`, agent-specific entrypoints, and custom project documentation. This list is illustrative, not exhaustive; discover existing intent without making the canonical system vendor-specific.
+4. Classify what you learn:
    - Discovered facts: directly observable in the repository.
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
-4. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as skills, and useful MCP capabilities.
-5. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else.
-6. Ask the maintainer only for unresolved facts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-7. Rewrite the scaffold canonical files into concise target-specific documentation:
+5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as skills, and useful MCP capabilities.
+6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else.
+7. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
+8. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -27,10 +50,10 @@ Inspect the target repository, generate concise project-specific agent context, 
    - `.agents/presets/`
    - `.agents/skills/`
    - `.agents/mcp/`
-8. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-9. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-10. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-11. Remove `.agents/BOOTSTRAP.md` after successful setup.
+9. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+10. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+11. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+12. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
 
 ## Good Maintainer Questions
 
@@ -46,7 +69,9 @@ Inspect the target repository, generate concise project-specific agent context, 
 
 - Asking what language or framework the repository uses when manifests make that clear.
 - Treating presets as higher authority than the existing codebase.
+- Silently choosing between conflicting existing and bootstrap policies.
 - Keeping every bootstrap preset in the target repository.
 - Leaving scaffold instructions in canonical files instead of replacing them with project facts.
 - Turning `.agents/TODO.md` into a per-task plan or product backlog.
-- Leaving this file in place after setup succeeds.
+- Removing preserved configuration before migration has been reviewed and validated.
+- Leaving temporary bootstrap or migration state in place after setup succeeds.

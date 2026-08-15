@@ -2,10 +2,10 @@
 
 `coding-agent-bootstrap` is a temporary kit for making software repositories coding-agent-ready.
 
-It installs a small discovery scaffold, lets a coding agent learn the target project, preserves useful context, and then removes the temporary setup procedure.
+It installs a small discovery scaffold, lets a coding agent learn the target project, preserves useful context, and then removes temporary setup state.
 
 ```text
-install -> discover -> configure -> validate -> remove bootstrap
+install -> preserve existing config if present -> discover -> reconcile -> configure -> validate -> remove bootstrap state
 ```
 
 ## Quick Start
@@ -23,6 +23,8 @@ irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/insta
 ```
 
 Then start a coding-agent session in the target repository. The agent will see `AGENTS.md` and `.agents/BOOTSTRAP.md`, inspect the project, replace the scaffolds with project-specific context, and remove `BOOTSTRAP.md` when setup is complete.
+
+The default command refuses existing `AGENTS.md`, `CLAUDE.md`, or `.agents/`. For a mature repository, use the explicit [merge workflow](#existing-agent-configuration).
 
 Piping remote code into a shell is convenient but less inspectable. The [transparent clone-based installation](#installation) is the preferred alternative when reviewing the installer first matters.
 
@@ -131,7 +133,7 @@ target-project/
 
 The root development configuration, README, installers, and tests are never copied.
 
-After setup, `.agents/BOOTSTRAP.md` is removed and only project-relevant presets, skills, and MCP capabilities remain.
+After setup, `.agents/BOOTSTRAP.md` and any `.coding-agent-bootstrap/` migration state are removed. Only project-relevant presets, skills, and MCP capabilities remain.
 
 ## Canonical Context
 
@@ -188,6 +190,68 @@ In an established codebase, the agent inspects manifests, lockfiles, source, tes
 
 It preserves intentional project decisions. Presets fill genuine gaps or clarify conventions; they do not impose a preferred stack on every repository.
 
+## Existing Agent Configuration
+
+Default installation remains conservative. If `AGENTS.md`, `CLAUDE.md`, or `.agents/` already exists, the installer lists the conflicting paths and stops without changing them:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh
+```
+
+Use explicit merge mode when existing coding-agent configuration should be migrated:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --merge
+```
+
+`--merge` does not text-merge Markdown. It:
+
+1. Copies existing direct conflicts verbatim into `.coding-agent-bootstrap/existing/`.
+2. Installs the normal bootstrap payload.
+3. Instructs the coding agent to semantically migrate useful project intent into the canonical structure.
+4. Leaves cleanup to the coding agent after migration and validation succeed.
+
+The installer preserves only paths it directly replaces: `AGENTS.md`, `CLAUDE.md`, and the complete `.agents/` tree. During discovery, the coding agent also inspects other project guidance, including vendor-specific or custom agent documentation.
+
+Example:
+
+```text
+Existing:
+AGENTS.md
+CLAUDE.md
+
+After install --merge:
+AGENTS.md
+CLAUDE.md
+.agents/
+└── BOOTSTRAP.md
+
+.coding-agent-bootstrap/
+└── existing/
+    ├── AGENTS.md
+    └── CLAUDE.md
+```
+
+After semantic migration:
+
+```text
+AGENTS.md
+CLAUDE.md
+.agents/
+├── VERSION
+├── WORKFLOW.md
+├── COMMANDS.md
+├── ARCHITECTURE.md
+├── TODO.md
+├── presets/
+├── skills/
+└── mcp/
+```
+
+`.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` are then gone. The agent must retain meaningful existing rules, deduplicate compatible guidance, and surface conflicting policies to the maintainer rather than silently choosing one.
+
+The preservation directory is temporary migration input, not a second configuration hierarchy. Do not commit it as the final agent configuration.
+
 ## New Repositories
 
 In an empty or nearly empty Git repository, presets can help the maintainer and agent establish sensible engineering defaults. When application scaffolding is requested, use ecosystem-native generators rather than turning this project into a universal application-template system.
@@ -202,7 +266,7 @@ Project `README.md`, user documentation, API docs, and product docs remain norma
 
 ## Installation
 
-All installation modes require Git and refuse to overwrite an existing `AGENTS.md`, `CLAUDE.md`, or `.agents/`. They stage the payload before moving it into place, clean temporary downloads, modify no unrelated files, and install no global software.
+All installation modes require a Git repository. By default they refuse existing direct conflicts; explicit merge mode preserves those paths before replacement. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
 
 ### Shell: Remote
 
@@ -213,6 +277,12 @@ curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/mai
 ```
 
 The streamed script shallow-clones the bootstrap repository into a temporary directory, copies only `bootstrap/`, and removes the temporary checkout.
+
+For merge mode:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --merge
+```
 
 ### Shell: Inspectable Clone
 
@@ -230,6 +300,12 @@ A local checkout can also target a repository explicitly:
 ./install.sh /path/to/target/repository
 ```
 
+Add `--merge` to preserve existing direct conflicts:
+
+```sh
+./install.sh --merge /path/to/target/repository
+```
+
 ### Windows: Remote PowerShell
 
 Run from the target repository root:
@@ -239,6 +315,12 @@ irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/insta
 ```
 
 The PowerShell installer uses the same temporary shallow-clone and overwrite-refusal model as the shell installer.
+
+For remote merge mode, invoke the downloaded script block with `-Merge`:
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1))) -Merge
+```
 
 ### Windows: Inspectable Clone
 
@@ -256,18 +338,30 @@ Remove-Item -Recurse -Force $bootstrapDir
 install.bat C:\path\to\target\repository
 ```
 
+Local Windows merge forms are:
+
+```powershell
+.\install.ps1 -Merge C:\path\to\target\repository
+```
+
+```bat
+install.bat -Merge C:\path\to\target\repository
+```
+
 ## Bootstrap Flow
 
 A first-run coding agent should:
 
 1. Inspect the target repository before asking questions.
 2. Distinguish discovered facts, maintainer-declared facts, and derived conclusions.
-3. Discover the stack, commands, architecture, workflow, conventions, useful skills, and desired external capabilities.
-4. Ask only for constraints that cannot be reliably inferred.
-5. Rewrite the canonical scaffold files as concise target-specific context.
-6. Validate documented commands where practical and report anything that could not be run.
-7. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
-8. Remove `.agents/BOOTSTRAP.md` only when setup is genuinely complete.
+3. Read `.coding-agent-bootstrap/existing/` when merge state is present and inspect other existing agent guidance.
+4. Discover the stack, commands, architecture, workflow, conventions, useful skills, and desired external capabilities.
+5. Reconcile compatible existing intent, deduplicate it, and surface meaningful policy conflicts.
+6. Ask only for constraints or conflicts that cannot be reliably resolved.
+7. Rewrite the canonical scaffold files as concise target-specific context.
+8. Validate documented commands where practical and report anything that could not be run.
+9. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
+10. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
 
 Never claim a check passed unless it was actually run. Relevant verification comes from the target's `.agents/COMMANDS.md`; bootstrap does not hard-code every possible check for every task.
 
@@ -282,7 +376,7 @@ The two version files have separate scopes:
 - Root `.agents/VERSION` identifies the schema used by this repository's own agent context.
 - `bootstrap/.agents/VERSION` identifies the installable payload schema and becomes the target's `.agents/VERSION`.
 
-Payload version `2` marks the separation of source-repository configuration from target-project scaffolding. Versioning remains intentionally simple; there is no migration framework.
+Payload version `3` adds explicit preservation state and semantic migration instructions for existing coding-agent configuration. Versioning remains intentionally simple; there is no migration framework.
 
 ## What This Is Not
 

@@ -18,16 +18,34 @@ Local Linux/macOS install from this checkout:
 ./install.sh /path/to/target/repo
 ```
 
+Preserve existing target configuration for semantic migration:
+
+```sh
+./install.sh --merge /path/to/target/repo
+```
+
 Remote-style install into the current Git repository:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh
 ```
 
+Remote merge install:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --merge
+```
+
 Local Windows install:
 
 ```bat
 install.bat C:\path\to\target\repo
+```
+
+Windows merge install:
+
+```powershell
+.\install.ps1 -Merge C:\path\to\target\repo
 ```
 
 ## Fast Verification

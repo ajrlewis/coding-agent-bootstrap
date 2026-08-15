@@ -5,36 +5,128 @@ REPOSITORY_URL=${CAB_INSTALL_REPOSITORY:-https://github.com/ajrlewis/coding-agen
 REPOSITORY_REF=${CAB_INSTALL_REF:-main}
 
 usage() {
-  echo "Usage: install.sh [target-repository]" >&2
-  echo "Installs the bootstrap payload into a target Git repository." >&2
+  echo "Usage: install.sh [--merge] [target-repository]"
+  echo
+  echo "Options:"
+  echo "  --merge    Preserve existing coding-agent configuration for semantic migration."
+  echo "  -h, --help Show this help."
 }
 
-case "${1:-}" in
-  -h|--help)
-    usage
-    exit 0
-    ;;
-esac
+path_exists() {
+  [ -e "$1" ] || [ -L "$1" ]
+}
 
-TARGET_DIR=${1:-$(pwd)}
+copy_path() {
+  if [ -d "$1" ] && [ ! -L "$1" ]; then
+    cp -Rp "$1" "$2"
+  else
+    cp -p "$1" "$2"
+  fi
+}
+
+remove_path() {
+  if [ -d "$1" ] && [ ! -L "$1" ]; then
+    rm -rf "$1"
+  else
+    rm -f "$1"
+  fi
+}
+
+MERGE_MODE=0
+TARGET_ARGUMENT=
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --merge)
+      MERGE_MODE=1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      if [ "$#" -gt 1 ]; then
+        echo "error: expected at most one target repository" >&2
+        usage >&2
+        exit 1
+      fi
+      if [ "$#" -eq 1 ]; then
+        TARGET_ARGUMENT=$1
+      fi
+      break
+      ;;
+    -*)
+      echo "error: unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+    *)
+      if [ -n "$TARGET_ARGUMENT" ]; then
+        echo "error: expected at most one target repository" >&2
+        usage >&2
+        exit 1
+      fi
+      TARGET_ARGUMENT=$1
+      ;;
+  esac
+  shift
+done
+
+TARGET_DIR=${TARGET_ARGUMENT:-$(pwd)}
 DOWNLOAD_DIR=
 STAGE_DIR=
+MIGRATION_DIR=
+MIGRATION_INSTALLED=0
 INSTALLED_AGENTS_MD=0
 INSTALLED_CLAUDE_MD=0
 INSTALLED_AGENTS_DIR=0
+EXISTING_AGENTS_MD=0
+EXISTING_CLAUDE_MD=0
+EXISTING_AGENTS_DIR=0
+
+restore_existing_configuration() {
+  restore_failed=0
+
+  if [ "$EXISTING_AGENTS_MD" -eq 1 ]; then
+    if path_exists "$TARGET_DIR/AGENTS.md" || ! copy_path "$MIGRATION_DIR/existing/AGENTS.md" "$TARGET_DIR/AGENTS.md"; then
+      restore_failed=1
+    fi
+  fi
+  if [ "$EXISTING_CLAUDE_MD" -eq 1 ]; then
+    if path_exists "$TARGET_DIR/CLAUDE.md" || ! copy_path "$MIGRATION_DIR/existing/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"; then
+      restore_failed=1
+    fi
+  fi
+  if [ "$EXISTING_AGENTS_DIR" -eq 1 ]; then
+    if path_exists "$TARGET_DIR/.agents" || ! copy_path "$MIGRATION_DIR/existing/.agents" "$TARGET_DIR/.agents"; then
+      restore_failed=1
+    fi
+  fi
+
+  if [ "$restore_failed" -eq 0 ]; then
+    if ! rm -rf "$MIGRATION_DIR"; then
+      echo "warning: restored original configuration but could not remove migration state: $MIGRATION_DIR" >&2
+    fi
+  else
+    echo "warning: automatic rollback was incomplete" >&2
+    echo "Preserved configuration remains at: $MIGRATION_DIR/existing" >&2
+  fi
+}
 
 cleanup() {
   status=$?
   trap - EXIT HUP INT TERM
 
   if [ "$status" -ne 0 ]; then
-    [ "$INSTALLED_AGENTS_MD" -eq 0 ] || rm -f "$TARGET_DIR/AGENTS.md"
-    [ "$INSTALLED_CLAUDE_MD" -eq 0 ] || rm -f "$TARGET_DIR/CLAUDE.md"
-    [ "$INSTALLED_AGENTS_DIR" -eq 0 ] || rm -rf "$TARGET_DIR/.agents"
+    [ "$INSTALLED_AGENTS_MD" -eq 0 ] || remove_path "$TARGET_DIR/AGENTS.md" || :
+    [ "$INSTALLED_CLAUDE_MD" -eq 0 ] || remove_path "$TARGET_DIR/CLAUDE.md" || :
+    [ "$INSTALLED_AGENTS_DIR" -eq 0 ] || remove_path "$TARGET_DIR/.agents" || :
+    [ "$MIGRATION_INSTALLED" -eq 0 ] || restore_existing_configuration || :
   fi
 
-  [ -z "$STAGE_DIR" ] || [ ! -d "$STAGE_DIR" ] || rm -rf "$STAGE_DIR"
-  [ -z "$DOWNLOAD_DIR" ] || [ ! -d "$DOWNLOAD_DIR" ] || rm -rf "$DOWNLOAD_DIR"
+  [ -z "$STAGE_DIR" ] || [ ! -d "$STAGE_DIR" ] || rm -rf "$STAGE_DIR" || :
+  [ -z "$DOWNLOAD_DIR" ] || [ ! -d "$DOWNLOAD_DIR" ] || rm -rf "$DOWNLOAD_DIR" || :
   exit "$status"
 }
 
@@ -47,6 +139,7 @@ if [ ! -d "$TARGET_DIR" ]; then
 fi
 
 TARGET_DIR=$(CDPATH= cd -- "$TARGET_DIR" && pwd)
+MIGRATION_DIR=$TARGET_DIR/.coding-agent-bootstrap
 
 if [ ! -d "$TARGET_DIR/.git" ]; then
   echo "error: target is not a Git repository: $TARGET_DIR" >&2
@@ -73,12 +166,30 @@ if [ -n "$SOURCE_DIR" ] && [ -f "$SOURCE_DIR/bootstrap/AGENTS.md" ] && [ -d "$SO
   fi
 fi
 
-for path in AGENTS.md CLAUDE.md .agents; do
-  if [ -e "$TARGET_DIR/$path" ]; then
-    echo "error: refusing to overwrite existing $path in target repository" >&2
-    exit 1
-  fi
-done
+path_exists "$TARGET_DIR/AGENTS.md" && EXISTING_AGENTS_MD=1
+path_exists "$TARGET_DIR/CLAUDE.md" && EXISTING_CLAUDE_MD=1
+path_exists "$TARGET_DIR/.agents" && EXISTING_AGENTS_DIR=1
+HAS_EXISTING=0
+if [ "$EXISTING_AGENTS_MD" -eq 1 ] || [ "$EXISTING_CLAUDE_MD" -eq 1 ] || [ "$EXISTING_AGENTS_DIR" -eq 1 ]; then
+  HAS_EXISTING=1
+fi
+
+if [ "$HAS_EXISTING" -eq 1 ] && [ "$MERGE_MODE" -eq 0 ]; then
+  echo "Existing coding-agent configuration detected:" >&2
+  [ "$EXISTING_AGENTS_MD" -eq 0 ] || echo "  AGENTS.md" >&2
+  [ "$EXISTING_CLAUDE_MD" -eq 0 ] || echo "  CLAUDE.md" >&2
+  [ "$EXISTING_AGENTS_DIR" -eq 0 ] || echo "  .agents/" >&2
+  echo >&2
+  echo "Refusing to overwrite existing configuration." >&2
+  echo "Re-run with --merge to preserve and migrate the existing configuration." >&2
+  exit 1
+fi
+
+if path_exists "$MIGRATION_DIR"; then
+  echo "error: temporary migration state already exists: $MIGRATION_DIR" >&2
+  echo "Complete or remove the existing migration state before running the installer again." >&2
+  exit 1
+fi
 
 if [ -n "$SOURCE_DIR" ] && [ -f "$SOURCE_DIR/bootstrap/AGENTS.md" ] && [ -d "$SOURCE_DIR/bootstrap/.agents" ]; then
   PAYLOAD_DIR=$SOURCE_DIR/bootstrap
@@ -105,21 +216,40 @@ if [ ! -f "$PAYLOAD_DIR/AGENTS.md" ] ||
   exit 1
 fi
 
-STAGE_DIR=$(mktemp -d "$TARGET_DIR/.coding-agent-bootstrap.XXXXXX")
-mkdir "$STAGE_DIR/.agents"
-cp "$PAYLOAD_DIR/AGENTS.md" "$STAGE_DIR/AGENTS.md"
-cp "$PAYLOAD_DIR/CLAUDE.md" "$STAGE_DIR/CLAUDE.md"
-cp -R "$PAYLOAD_DIR/.agents/." "$STAGE_DIR/.agents/"
+STAGE_DIR=$(mktemp -d "$TARGET_DIR/.coding-agent-bootstrap-stage.XXXXXX")
+mkdir -p "$STAGE_DIR/payload/.agents"
+cp -p "$PAYLOAD_DIR/AGENTS.md" "$STAGE_DIR/payload/AGENTS.md"
+cp -p "$PAYLOAD_DIR/CLAUDE.md" "$STAGE_DIR/payload/CLAUDE.md"
+cp -Rp "$PAYLOAD_DIR/.agents/." "$STAGE_DIR/payload/.agents/"
 
-mv "$STAGE_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md"
+if [ "$HAS_EXISTING" -eq 1 ]; then
+  mkdir -p "$STAGE_DIR/migration/existing"
+  [ "$EXISTING_AGENTS_MD" -eq 0 ] || copy_path "$TARGET_DIR/AGENTS.md" "$STAGE_DIR/migration/existing/AGENTS.md"
+  [ "$EXISTING_CLAUDE_MD" -eq 0 ] || copy_path "$TARGET_DIR/CLAUDE.md" "$STAGE_DIR/migration/existing/CLAUDE.md"
+  [ "$EXISTING_AGENTS_DIR" -eq 0 ] || copy_path "$TARGET_DIR/.agents" "$STAGE_DIR/migration/existing/.agents"
+
+  mv "$STAGE_DIR/migration" "$MIGRATION_DIR"
+  MIGRATION_INSTALLED=1
+
+  [ "$EXISTING_AGENTS_MD" -eq 0 ] || remove_path "$TARGET_DIR/AGENTS.md"
+  [ "$EXISTING_CLAUDE_MD" -eq 0 ] || remove_path "$TARGET_DIR/CLAUDE.md"
+  [ "$EXISTING_AGENTS_DIR" -eq 0 ] || remove_path "$TARGET_DIR/.agents"
+fi
+
+mv "$STAGE_DIR/payload/AGENTS.md" "$TARGET_DIR/AGENTS.md"
 INSTALLED_AGENTS_MD=1
-mv "$STAGE_DIR/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"
+mv "$STAGE_DIR/payload/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"
 INSTALLED_CLAUDE_MD=1
-mv "$STAGE_DIR/.agents" "$TARGET_DIR/.agents"
+mv "$STAGE_DIR/payload/.agents" "$TARGET_DIR/.agents"
 INSTALLED_AGENTS_DIR=1
 
 echo "Installed coding-agent-bootstrap into:"
 echo "  $TARGET_DIR"
+if [ "$HAS_EXISTING" -eq 1 ]; then
+  echo
+  echo "Existing coding-agent configuration was preserved at:"
+  echo "  .coding-agent-bootstrap/existing/"
+fi
 echo
 echo "Next: start a coding-agent session in the target repository."
 echo "The agent should read AGENTS.md and complete .agents/BOOTSTRAP.md before normal project work."
