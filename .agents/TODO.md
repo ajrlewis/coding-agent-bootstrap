@@ -6,4 +6,5 @@ Do not use it as a per-task execution plan or as a replacement for GitHub Issues
 
 ## Open Items
 
-- None.
+- Consider adding a tiny `CONTRIBUTING.md` if presets or skills start receiving external contributions. Keep the acceptance rule strict: high signal, low bloat.
+- Consider an explicit installer option to initialize Git for empty-project bootstraps. Keep the default conservative.

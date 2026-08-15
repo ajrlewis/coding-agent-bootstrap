@@ -10,6 +10,28 @@ install -> discover -> configure -> validate -> remove bootstrap
 
 The generated agent context remains with the target project. The bootstrap itself should stay out of the way.
 
+## Quick Start
+
+Clone the bootstrap repository, then run the installer from or against the target Git repository.
+
+Linux/macOS:
+
+```sh
+git clone git@github.com:ajrlewis/coding-agent-bootstrap.git /tmp/coding-agent-bootstrap
+cd /path/to/target/repository
+/tmp/coding-agent-bootstrap/install.sh .
+```
+
+Windows:
+
+```bat
+git clone git@github.com:ajrlewis/coding-agent-bootstrap.git %TEMP%\coding-agent-bootstrap
+cd C:\path\to\target\repository
+%TEMP%\coding-agent-bootstrap\install.bat .
+```
+
+Then start a coding-agent session in the target repository and have it follow `AGENTS.md` and `.agents/BOOTSTRAP.md`.
+
 ## Why
 
 Coding agents often enter repositories without knowing the actual development commands, architecture boundaries, project-specific workflow, technology conventions, persistent unfinished context, or external capabilities available to them.
