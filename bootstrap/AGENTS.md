@@ -1,7 +1,7 @@
 # Coding Agent Rules
 
 ## 1. Think Before Coding
-Do not assume. Surface ambiguity. Understand the existing code and surrounding context before changing it.
+Do not assume. Surface ambiguity. Understand existing code and context before changing it.
 
 ## 2. Keep It Simple
 Write the minimum code necessary. Avoid speculative abstractions, unnecessary flexibility, and premature generalization.
@@ -10,17 +10,19 @@ Write the minimum code necessary. Avoid speculative abstractions, unnecessary fl
 Change only what the task requires. Preserve existing patterns. Do not refactor unrelated code.
 
 ## 4. Work Toward Verifiable Outcomes
-Define what success means. Test the result. Do not declare completion without evidence.
+Define success. Test the result. Do not declare completion without evidence.
 
 ## Where To Look
 
-- `.agents/WORKFLOW.md` - how development work normally proceeds.
-- `.agents/COMMANDS.md` - canonical known-good commands.
-- `.agents/ARCHITECTURE.md` - system structure, boundaries, and invariants.
+- `.agents/WORKFLOW.md` - the project's development process.
+- `.agents/COMMANDS.md` - canonical verified commands.
+- `.agents/ARCHITECTURE.md` - system boundaries and invariants.
 - `.agents/TODO.md` - persistent agent-managed follow-up work.
 - `.agents/presets/` - adopted engineering conventions.
 - `.agents/skills/` - recurring specialized procedures.
-- `.agents/mcp/` - desired external capabilities for agents.
+- `.agents/mcp/` - desired external capabilities.
+
+If `.agents/BOOTSTRAP.md` exists, complete it before normal project work.
 
 ## Definition Of Done
 

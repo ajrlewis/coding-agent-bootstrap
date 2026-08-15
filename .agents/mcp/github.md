@@ -1,25 +1,5 @@
-# GitHub MCP Capability
+# GitHub Capability
 
-## Capability
+GitHub access is useful for pull requests, review comments, Actions status, repository metadata, tags, and releases for this repository.
 
-GitHub repository access.
-
-## Purpose
-
-Useful for issues, pull requests, review comments, Actions/CI status, repository metadata, branches, tags, and releases.
-
-## Requirement
-
-Optional by default. Required only when the task depends on GitHub state that is not available in the local checkout.
-
-## Expected Scope
-
-Grant the narrowest access that supports the task: repository metadata, pull requests, issues, and workflow status where needed.
-
-## Configuration
-
-Host-specific MCP configuration varies. Use this file as the canonical capability intent and create only thin host adapters when required.
-
-## Security Notes
-
-Do not commit tokens, private keys, or credential values. Environment variable names are acceptable; secret values are not.
+Use the narrowest scope required by the task. Keep credentials in the agent host or environment; never commit token values.

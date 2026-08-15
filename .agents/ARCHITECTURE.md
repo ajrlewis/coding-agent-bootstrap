@@ -4,23 +4,25 @@
 
 ## Components
 
-- `AGENTS.md` is the concise canonical entrypoint for coding agents.
-- `.agents/*.md` stores durable project-specific agent context.
-- `.agents/presets/` stores reusable engineering conventions that may be adopted and tailored by a target repository.
-- `.agents/skills/` stores recurring procedures where consistent execution matters.
-- `.agents/mcp/` stores vendor-neutral desired external capability definitions.
-- `install.sh`, `install.bat`, and `install.ps1` copy the bootstrap files into a target repository.
+- Root `AGENTS.md`, `CLAUDE.md`, and `.agents/` configure agents developing this repository.
+- `bootstrap/` is the complete payload copied into target repositories. Its canonical files are temporary writing scaffolds; its preset, skill, and MCP directories are the reusable discovery library.
+- `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input.
+- `install.ps1` provides the equivalent local and remote Windows path; `install.bat` is its local compatibility entrypoint.
+- `tests/install.sh` exercises shell installation and safety behavior without adding a runtime dependency.
 
 ## Boundaries
 
-- The installer is intentionally dumb. It copies files safely and refuses existing agent configuration.
-- Repository inspection, inference, tailoring, validation, and cleanup are performed by the coding agent after installation.
+- Root agent context must never be installed into target repositories.
+- Installers copy only `bootstrap/AGENTS.md`, `bootstrap/CLAUDE.md`, and `bootstrap/.agents/`.
+- Installers validate and transfer files; repository inspection, inference, tailoring, validation, and cleanup belong to the coding agent after installation.
 - No runtime service, daemon, orchestration layer, or application generator belongs here.
 - Host-specific files must be thin adapters that point back to canonical context.
+- Shell and PowerShell implementations should preserve equivalent overwrite refusal and Git-repository checks.
 
 ## Invariants
 
-- `AGENTS.md` stays short and routes to deeper context.
-- Commands live in `.agents/COMMANDS.md`, not scattered through presets and skills.
-- `.agents/BOOTSTRAP.md` is temporary setup state and should be removed after first-run configuration.
+- Root and payload `AGENTS.md` files stay short and route to their respective canonical context.
+- Exact project commands live in the relevant `.agents/COMMANDS.md`, not presets or skills.
+- Only the payload contains `.agents/BOOTSTRAP.md`; installed repositories remove it after first-run configuration.
 - Installed target repositories should keep only adopted presets, useful skills, and desired MCP capabilities.
+- Installation must refuse existing `AGENTS.md`, `CLAUDE.md`, or `.agents/` and avoid modifying unrelated files.
