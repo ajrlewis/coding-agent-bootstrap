@@ -14,4 +14,4 @@ Changes to `coding-agent-bootstrap` should follow this loop:
 10. Update README or agent-managed context if behavior or architecture changed.
 11. Record deferred, agent-relevant follow-up work in `.agents/TODO.md`.
 
-Use the GitHub Flow preset for repository changes. Do not add a runtime dependency unless the behavior genuinely requires one.
+Use the GitHub Flow preset for repository changes, including merging the latest `origin/main` before pushing or updating a PR and rerunning relevant verification afterward. Do not add a runtime dependency unless the behavior genuinely requires one.

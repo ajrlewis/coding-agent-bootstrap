@@ -40,7 +40,7 @@ This directory is recoverable migration input, not durable project context. Do n
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
 5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as skills, and useful MCP capabilities.
-6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else.
+6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt `.agents/presets/git/github-flow.md` as the default.
 7. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
 8. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
