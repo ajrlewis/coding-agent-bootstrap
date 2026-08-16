@@ -1,11 +1,15 @@
 # GitHub Flow
 
-This repository uses focused branches and pull requests.
+This repository uses focused branches and pull requests into `main`.
 
-- Branch from `main`; do not push feature work directly to `main`.
+- Start concise feature or fix branches from the latest `main`; never push directly to `main`.
 - Keep each branch and commit focused on one coherent change.
-- Push the branch and open a pull request against `main`.
-- Do not rewrite shared history casually.
-- Inspect validation and review results before merging.
+- Commit locally as needed. Do not merge `main` before every commit.
+- Before pushing or opening or updating a PR, run `git fetch origin` and merge `origin/main` into the feature branch.
+- Resolve conflicts on the feature branch, inspect the resolved diff, and rerun relevant checks from `.agents/COMMANDS.md` before pushing.
+- Prefer merge over rebase so shared history is not rewritten and force pushes are unnecessary.
+- Push the feature branch and open or update a pull request targeting `main`.
+- Inspect CI, required checks, mergeability, and review feedback before considering the change ready.
+- Never bypass required checks, rewrite shared history casually, or force-push a shared branch without explicit policy and clear intent.
 
-Repository-specific commands remain in `.agents/COMMANDS.md`.
+Protect `main` with a GitHub ruleset that requires pull requests and relevant checks, and blocks direct pushes, force pushes, and deletion. Add approval or up-to-date branch requirements when repository risk warrants them.

@@ -4,6 +4,8 @@
 
 Inspect existing contributor documentation, CI, branch policy, task runners, tests, and recent repository history. Existing repository conventions take precedence over this generic model.
 
+If no project-specific Git policy exists, use `.agents/presets/git/github-flow.md`. It defines when to sync with `origin/main` and requires relevant verification after conflict resolution.
+
 Adapt the normal loop where appropriate:
 
 ```text

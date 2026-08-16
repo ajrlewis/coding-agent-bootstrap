@@ -165,6 +165,8 @@ The name `presets` is intentional. A template suggests copying content blindly. 
 
 Existing project conventions take precedence over generic presets. The first agent removes presets that are not relevant and tailors those the target adopts.
 
+The default Git preset uses focused branches, merges the latest `origin/main` into the branch before pushing or updating a PR, reruns relevant verification after conflict resolution, and recommends protecting `main` with GitHub branch rules.
+
 ## Skills
 
 Skills describe recurring specialized procedures:
