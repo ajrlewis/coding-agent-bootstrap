@@ -25,6 +25,17 @@ make_git_repo() {
   git -C "$TEST_REPO" init --quiet
 }
 
+make_committed_git_repo() {
+  TEST_REPO=$TEST_ROOT/$1
+  mkdir -p "$TEST_REPO"
+  git -C "$TEST_REPO" init --quiet --initial-branch=main
+  git -C "$TEST_REPO" config user.name "Installer Test"
+  git -C "$TEST_REPO" config user.email "installer-test@example.invalid"
+  printf '%s\n' "tracked fixture" >"$TEST_REPO/tracked.txt"
+  git -C "$TEST_REPO" add tracked.txt
+  git -C "$TEST_REPO" commit --quiet -m "Initial fixture"
+}
+
 assert_failed_with() {
   expected=$1
   shift
@@ -48,7 +59,7 @@ assert_no_staging_files() {
 
 echo "Testing local installation..."
 "$ROOT_DIR/install.sh" --help >"$TEST_ROOT/help-output"
-grep -F "install.sh [--merge] [target-repository]" "$TEST_ROOT/help-output" >/dev/null || fail "help omits merge usage"
+grep -F "install.sh [--merge] [--allow-current-branch] [target-repository]" "$TEST_ROOT/help-output" >/dev/null || fail "help omits installer options"
 make_git_repo local-target
 "$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
 [ -f "$TEST_REPO/AGENTS.md" ] || fail "AGENTS.md was not installed"
@@ -62,6 +73,26 @@ if cmp "$ROOT_DIR/.agents/ARCHITECTURE.md" "$TEST_REPO/.agents/ARCHITECTURE.md" 
 fi
 assert_no_staging_files "$TEST_REPO"
 [ ! -e "$TEST_REPO/.coding-agent-bootstrap" ] || fail "clean install created migration state"
+
+echo "Testing default-branch refusal..."
+make_committed_git_repo default-branch
+assert_failed_with "refusing to install on the repository's default branch: main" "$ROOT_DIR/install.sh" "$TEST_REPO"
+[ ! -e "$TEST_REPO/AGENTS.md" ] || fail "default-branch refusal installed AGENTS.md"
+[ ! -e "$TEST_REPO/.agents" ] || fail "default-branch refusal installed .agents"
+
+make_committed_git_repo remote-default-branch
+git -C "$TEST_REPO" branch -m trunk
+git -C "$TEST_REPO" symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/trunk
+assert_failed_with "refusing to install on the repository's default branch: trunk" "$ROOT_DIR/install.sh" "$TEST_REPO"
+
+make_committed_git_repo allowed-default-branch
+"$ROOT_DIR/install.sh" --allow-current-branch "$TEST_REPO" >/dev/null
+[ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "default-branch override did not install payload"
+
+make_committed_git_repo feature-branch
+git -C "$TEST_REPO" switch --quiet -c chore/bootstrap-test
+"$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
+[ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "feature-branch install did not install payload"
 
 echo "Testing overwrite refusal..."
 make_git_repo existing-agents-md

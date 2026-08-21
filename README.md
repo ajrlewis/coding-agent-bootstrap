@@ -10,13 +10,19 @@ install -> preserve existing config if present -> discover -> reconcile -> confi
 
 ## Quick Start
 
-From the root of an existing Git repository on Linux or macOS:
+From the root of an existing Git repository, create a focused branch when the repository has commits and is currently on its default branch:
+
+```sh
+git switch -c chore/coding-agent-bootstrap
+```
+
+Skip that step when already on a feature branch or when the repository has no commits. Then install on Linux or macOS:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh
 ```
 
-On Windows PowerShell:
+On Windows PowerShell, install after the same branch check:
 
 ```powershell
 irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1 | iex
@@ -268,7 +274,7 @@ Project `README.md`, user documentation, API docs, and product docs remain norma
 
 ## Installation
 
-All installation modes require a Git repository. By default they refuse existing direct conflicts; explicit merge mode preserves those paths before replacement. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
+All installation modes require a Git repository. In repositories with commits, installers refuse to modify the default branch; create a focused branch first, or use the explicit `--allow-current-branch` (`-AllowCurrentBranch` in PowerShell) override when installation there is intentional. Unborn repositories are allowed. By default installers also refuse existing direct conflicts; explicit merge mode preserves those paths before replacement. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
 
 ### Shell: Remote
 
@@ -284,6 +290,12 @@ For merge mode:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --merge
+```
+
+To intentionally install on the current default branch:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --allow-current-branch
 ```
 
 ### Shell: Inspectable Clone
@@ -308,6 +320,8 @@ Add `--merge` to preserve existing direct conflicts:
 ./install.sh --merge /path/to/target/repository
 ```
 
+Add `--allow-current-branch` only when installing on the repository's default branch is intentional.
+
 ### Windows: Remote PowerShell
 
 Run from the target repository root:
@@ -323,6 +337,8 @@ For remote merge mode, invoke the downloaded script block with `-Merge`:
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1))) -Merge
 ```
+
+Use `-AllowCurrentBranch` only when installing on the repository's default branch is intentional.
 
 ### Windows: Inspectable Clone
 
