@@ -7,6 +7,7 @@ Use this default when the repository has no documented Git workflow. Existing pr
 - Work on feature or fix branches, not directly on `main`.
 - Start each branch from an up-to-date `main`.
 - Use a concise, descriptive branch name.
+- When work has a tracker identifier, include it and use the actual change type, such as `feature/ENG-123-add-export`, `fix/ENG-124-handle-empty-response`, or `chore/ENG-125-update-dependencies`; not every work item is a chore.
 - Keep the branch focused on one logical change.
 - Make focused local commits with clear messages.
 - Never push directly to `main`.

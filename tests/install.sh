@@ -65,6 +65,7 @@ make_git_repo local-target
 [ -f "$TEST_REPO/AGENTS.md" ] || fail "AGENTS.md was not installed"
 [ -f "$TEST_REPO/CLAUDE.md" ] || fail "CLAUDE.md was not installed"
 [ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "BOOTSTRAP.md was not installed"
+[ -f "$TEST_REPO/.agents/mcp/linear.md" ] || fail "Linear MCP capability was not installed"
 [ "$(sed -n '1p' "$TEST_REPO/.agents/VERSION")" = "3" ] || fail "payload version is not 3"
 cmp "$ROOT_DIR/bootstrap/AGENTS.md" "$TEST_REPO/AGENTS.md" >/dev/null || fail "installed AGENTS.md does not match payload"
 cmp "$ROOT_DIR/bootstrap/.agents/ARCHITECTURE.md" "$TEST_REPO/.agents/ARCHITECTURE.md" >/dev/null || fail "installed architecture does not match payload"
