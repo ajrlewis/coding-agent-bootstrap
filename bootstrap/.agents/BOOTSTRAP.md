@@ -44,8 +44,9 @@ This directory is recoverable migration input, not durable project context. Do n
 7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection).
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
 9. When hosted secrets, deployment, data, or documentation services are adopted, complete the service-boundary reconciliation in [External Service Boundaries](#external-service-boundaries).
-10. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-11. Rewrite the scaffold canonical files into concise target-specific documentation:
+10. Complete the prerequisite reconciliation in [Tooling And Host Capabilities](#tooling-and-host-capabilities).
+11. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
+12. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -53,10 +54,10 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/presets/`
    - `.agents/skills/`
    - `.agents/mcp/`
-12. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-13. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-14. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-15. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+13. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+14. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+15. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+16. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
 
 ## GitHub Flow Protection
 
@@ -94,6 +95,18 @@ When the project adopts hosted secrets, deployment, data, or documentation servi
 5. Keep and tailor only the relevant files under `.agents/mcp/`. These files describe capability intent and least-privilege scope; they do not contain credentials or silently install host integrations.
 6. Prefer project-scoped, read-only, development access for inspection. Require explicit authorization for secret writes, deployments, production access, database mutations, domain changes, or authenticated documentation edits.
 7. Verify external changes through the provider after making them. If access or permission is unavailable, report the limitation and record genuine unresolved setup work in `.agents/TODO.md`.
+
+## Tooling And Host Capabilities
+
+Reconcile tools only after determining which project workflows and external capabilities the target actually adopts:
+
+1. Inspect manifests, lockfiles, task runners, version-manager files, container configuration, CI, existing setup docs, and available host tools before proposing installation.
+2. Separate installer prerequisites, project command dependencies, provider CLIs, local MCP runtimes, and remote MCP connections. A remote OAuth MCP server does not imply that its provider CLI must be installed.
+3. Verify each required executable with a non-mutating lookup and version command, using `command -v` on POSIX systems or `Get-Command` on PowerShell where appropriate.
+4. Prefer repository-pinned development dependencies and existing tool managers over global installations. Preserve the project's package manager and lockfile rather than introducing another one for a CLI.
+5. Document only adopted, verified invocations and version constraints in `.agents/COMMANDS.md`. Keep host-specific MCP configuration as a thin adapter to `.agents/mcp/` capability intent.
+6. Do not install Homebrew, a language runtime, global npm packages, provider CLIs, credentials, or user-level MCP configuration without explicit authorization. Do not treat the presence of a capability template as authorization to connect it.
+7. If a required project command cannot run because a tool or authenticated capability is unavailable, report the exact gap and record genuine unresolved setup work in `.agents/TODO.md`. Do not claim the command or integration was verified.
 
 ## Good Maintainer Questions
 

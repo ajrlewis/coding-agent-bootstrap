@@ -20,6 +20,10 @@ Keep application code and deployment configuration in the repository. Treat Verc
 
 Prefer access limited to the relevant account, team, and project. Read deployments and logs as needed. Creating, promoting, rolling back, or cancelling deployments, changing domains or project settings, editing environment variables, or affecting production requires explicit authorization.
 
+## Local Tooling
+
+Vercel's hosted remote MCP server does not require the `vercel` CLI. Adopt the CLI only when project commands use it for local environment retrieval, builds, logs, or deployment operations. Keep its installation and authentication outside the bootstrap installer.
+
 ## Configuration
 
 Prefer Vercel's official OAuth-based MCP endpoint, `https://mcp.vercel.com`, when the agent host supports it. Verify its current maturity, available tools, and effective access before relying on it. Keep host-specific connection state outside the repository and record exact verified CLI commands in `.agents/COMMANDS.md` only when the project adopts them.

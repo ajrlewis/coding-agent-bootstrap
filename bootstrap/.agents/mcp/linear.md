@@ -20,6 +20,10 @@ Keep work items in Linear. Do not mirror the Linear backlog or issue description
 
 Prefer access limited to the relevant workspace, teams, and projects. Read issue details and discussion as needed. Write status changes, links, or comments only when the adopted project workflow and current task require them. Do not create, delete, reassign, or reprioritize work without clear authorization.
 
+## Local Tooling
+
+Linear's hosted remote MCP server does not require a Linear CLI. Configure it through the adopted agent host and OAuth flow. A compatibility wrapper that runs through `npx` requires Node.js, but native remote MCP clients do not.
+
 ## Configuration
 
 Host-specific MCP or plugin configuration varies. Keep workspace and team selection in the host configuration where practical, and record only non-secret capability intent in this file.

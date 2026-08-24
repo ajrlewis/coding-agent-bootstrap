@@ -20,6 +20,10 @@ Keep secret values in Doppler. Repository files may document required variable n
 
 Use the narrowest token, project, configuration, and environment scope that supports the task. Prefer the official MCP server's read-only mode for inspection and restrict it to the relevant project and config. Development access does not imply staging or production access. Creating or changing secrets, environments, configs, syncs, service tokens, or production values requires explicit authorization.
 
+## Local Tooling
+
+Doppler's local MCP server runs through Node.js and `npx`; verify its current runtime requirement before configuration. The separate `doppler` CLI is recommended only when adopted project commands use runtime injection such as `doppler run`. Neither tool is an installer prerequisite, and neither should be installed globally without authorization.
+
 ## Configuration
 
 Prefer Doppler's official MCP server when the project adopts it, and verify its current maturity and available operations before relying on it. Keep host-specific setup and authentication outside the repository, and enforce access with properly scoped Doppler credentials rather than relying only on client flags. Prefer runtime injection such as `doppler run` over downloading persistent secret files. Record exact verified project commands in `.agents/COMMANDS.md`.

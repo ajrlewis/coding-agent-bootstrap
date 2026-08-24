@@ -276,6 +276,39 @@ The installer currently requires an existing Git repository. It does not silentl
 
 Project `README.md`, user documentation, API docs, and product docs remain normal project documentation. Update them when project behavior changes, not merely because agent context exists.
 
+## Prerequisites And Optional Tooling
+
+The installer has a deliberately small runtime boundary:
+
+- an existing Git repository and the `git` executable;
+- a POSIX `sh` environment for `install.sh`, or PowerShell for `install.ps1`;
+- `curl` only when using the POSIX remote one-liner. PowerShell's remote form uses `Invoke-RestMethod` through `irm`.
+
+Homebrew, Node.js, Codex, `gh`, and provider CLIs are not installer dependencies. The first-run agent discovers which target-project workflows are actually adopted, verifies the corresponding commands, and records missing required tooling without installing global software or changing user-level MCP configuration.
+
+Common optional tools have different boundaries:
+
+| Capability | Provider CLI required for MCP? | Adopt local tooling when |
+| --- | --- | --- |
+| GitHub | No | `gh` is used for pull requests, branch protection, releases, or API operations. |
+| Linear | No | Its hosted remote MCP connection is sufficient; compatibility wrappers may require Node.js. |
+| Doppler | Its local MCP server requires Node.js and `npx`, not the Doppler CLI. | Project commands inject secrets with `doppler run` or otherwise use the CLI. |
+| Vercel | No | Project commands use local environment retrieval, builds, logs, or deployments. |
+| Supabase | No | Local development, migrations, type generation, or the local stack is adopted; the local stack also needs a container runtime. |
+| Mintlify | No | Local documentation preview, validation, or testing is adopted. |
+
+Examples for an adopted macOS workflow are intentionally separate from installation:
+
+```sh
+brew install gh
+brew install gnupg dopplerhq/cli/doppler
+pnpm i -g vercel
+pnpm add -D supabase
+npx mint dev
+```
+
+Prefer a repository-pinned dependency such as Supabase's project package when supported. Keep exact, verified invocations in the target's `.agents/COMMANDS.md`; do not retain unused provider tooling merely because its capability template was installed.
+
 ## Installation
 
 All installation modes require a Git repository. In repositories with commits, installers refuse to modify the default branch; create a focused branch first, or use the explicit `--allow-current-branch` (`-AllowCurrentBranch` in PowerShell) override when installation there is intentional. Unborn repositories are allowed. By default installers also refuse existing direct conflicts; explicit merge mode preserves those paths before replacement. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
@@ -382,11 +415,12 @@ A first-run coding agent should:
 6. When GitHub Flow is adopted, detect the remote default branch and verify its protection, changing remote settings only with explicit maintainer authorization.
 7. When an external tracker is adopted, keep it canonical and document its work-item-to-branch-to-pull-request lifecycle without mirroring the backlog.
 8. For adopted hosted services, document canonical state, sync direction, environment boundaries, and authorization requirements without duplicating credentials or provider state.
-9. Ask only for constraints or conflicts that cannot be reliably resolved.
-10. Rewrite the canonical scaffold files as concise target-specific context.
-11. Validate documented commands where practical and report anything that could not be run.
-12. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
-13. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
+9. Verify only the command-line tools and host capabilities required by adopted workflows; do not install global tools or connect external accounts implicitly.
+10. Ask only for constraints or conflicts that cannot be reliably resolved.
+11. Rewrite the canonical scaffold files as concise target-specific context.
+12. Validate documented commands where practical and report anything that could not be run.
+13. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
+14. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
 
 Never claim a check passed unless it was actually run. Relevant verification comes from the target's `.agents/COMMANDS.md`; bootstrap does not hard-code every possible check for every task.
 

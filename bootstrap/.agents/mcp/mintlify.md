@@ -20,6 +20,10 @@ For docs-as-code projects, keep documentation source, navigation configuration, 
 
 Use the documentation site's `/mcp` endpoint for search-only access to published content. Use the authenticated Mintlify editing MCP at `https://mcp.mintlify.com` only when editing through Mintlify is part of the adopted workflow. Editing access is equivalent to granting a developer commit capability: keep changes on a focused branch, inspect the diff, run relevant documentation checks, and merge through a reviewed pull request.
 
+## Local Tooling
+
+Mintlify's hosted MCP endpoints do not require the `mint` CLI. Adopt `mint` only when the project uses local documentation preview, validation, testing, or authenticated CLI features. It can run through a package runner without a global installation; document the verified form in `.agents/COMMANDS.md`.
+
 ## Configuration
 
 Public, partially authenticated, and private documentation require different hosted endpoints and authentication. Confirm that the selected endpoint exposes only the intended audience's content. Keep OAuth sessions and host-specific connector configuration outside the repository.
