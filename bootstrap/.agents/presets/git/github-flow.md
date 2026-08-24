@@ -50,15 +50,16 @@ Open or update a pull request targeting `main`. Before considering it ready to m
 
 Never force-push a shared branch unless repository policy explicitly permits it and the intent is clear. Never rewrite shared history casually. Prefer reversible, auditable Git operations.
 
-## Recommended Repository Settings
+## Repository Protection
 
-For shared repositories, protect `main` with a GitHub ruleset or branch protection policy. Where appropriate:
+Protect the remote default branch with a GitHub ruleset or branch protection policy when GitHub Flow is adopted. For shared repositories:
 
 - require pull requests before merge;
-- require relevant CI or status checks;
-- prevent direct pushes to `main`;
-- block force pushes and deletion of `main`;
-- require approvals when team size or change risk warrants them;
-- require branches to be current with `main` before merge when the CI or merge strategy benefits from it.
+- require at least one approving review;
+- enforce protection for administrators;
+- prevent direct pushes to the default branch;
+- block force pushes and deletion of the default branch.
 
-Apply settings proportionally; not every repository needs every optional restriction.
+Require relevant CI or status checks when they exist, and require branches to be current with the default branch when the CI or merge strategy benefits from it.
+
+In a solo repository, ask the maintainer whether an external approval is practical because authors cannot approve their own pull requests. Verify the effective remote settings when GitHub access is available; if access or administration permission is unavailable, record the unresolved work in `.agents/TODO.md` rather than claiming protection is configured.
