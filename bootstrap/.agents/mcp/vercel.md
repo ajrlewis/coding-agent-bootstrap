@@ -1,0 +1,31 @@
+# Vercel MCP Capability
+
+## Capability
+
+Vercel project, deployment, log, and documentation access.
+
+## Purpose
+
+Useful for inspecting linked projects, deployment status, build or runtime logs, environment metadata, and platform documentation when repository-local configuration is insufficient.
+
+## Requirement
+
+Optional by default. Required only when Vercel-hosted state affects the task and cannot be inferred from the repository, local verification, or CI.
+
+## Source Of Truth
+
+Keep application code and deployment configuration in the repository. Treat Vercel as the source of truth for live deployment state. When Doppler is the canonical secret manager and syncs values to Vercel, do not create or edit duplicate environment values directly in Vercel unless the maintainer explicitly adopts that exception.
+
+## Expected Scope
+
+Prefer access limited to the relevant account, team, and project. Read deployments and logs as needed. Creating, promoting, rolling back, or cancelling deployments, changing domains or project settings, editing environment variables, or affecting production requires explicit authorization.
+
+## Configuration
+
+Prefer Vercel's official OAuth-based MCP endpoint, `https://mcp.vercel.com`, when the agent host supports it. Verify its current maturity, available tools, and effective access before relying on it. Keep host-specific connection state outside the repository and record exact verified CLI commands in `.agents/COMMANDS.md` only when the project adopts them.
+
+See the official [Vercel MCP documentation](https://vercel.com/docs/agent-resources/vercel-mcp).
+
+## Security Notes
+
+Connecting the MCP server grants access derived from the authenticated Vercel user. Use a narrowly scoped account where practical. Do not expose environment values, access tokens, private logs, customer data, or deployment secrets in repository files or agent output.

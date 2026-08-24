@@ -15,6 +15,19 @@ Include where relevant:
 - critical invariants;
 - areas requiring particular care.
 
+For adopted hosted services, name the canonical source for each kind of state and document sync direction instead of listing disconnected vendors. For example, when the project uses this arrangement:
+
+```text
+Doppler
+├── syncs runtime secrets -> Vercel
+└── syncs service secrets -> Supabase
+
+repository documentation
+└── publishes through -> Mintlify
+```
+
+Record which repository files own deployment configuration, database migrations, edge functions, and documentation. Distinguish development, preview, staging, and production authority, and identify external mutations that require maintainer approval. Keep only relationships the target project actually adopts.
+
 Prefer boundaries and relationships over exhaustive directory listings. Inspect the repository before documenting this file. Do not speculate; distinguish observable facts from assumptions.
 
 Remove this bootstrap guidance once project-specific architecture has been documented.

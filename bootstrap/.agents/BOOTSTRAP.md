@@ -43,8 +43,9 @@ This directory is recoverable migration input, not durable project context. Do n
 6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt `.agents/presets/git/github-flow.md` as the default.
 7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection).
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
-9. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-10. Rewrite the scaffold canonical files into concise target-specific documentation:
+9. When hosted secrets, deployment, data, or documentation services are adopted, complete the service-boundary reconciliation in [External Service Boundaries](#external-service-boundaries).
+10. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
+11. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -52,10 +53,10 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/presets/`
    - `.agents/skills/`
    - `.agents/mcp/`
-11. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-12. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-13. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-14. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+12. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+13. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+14. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+15. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
 
 ## GitHub Flow Protection
 
@@ -81,6 +82,18 @@ When Linear or another external tracker is the canonical backlog:
 5. Use one branch per work item by default and include its stable identifier. Choose the branch prefix from the change type, such as `feature/ENG-123-add-export`, `fix/ENG-124-handle-empty-response`, or `chore/ENG-125-update-dependencies`; do not classify every tracked item as a chore.
 6. Fetch current work-item details through the configured capability before implementation. Link the pull request to the canonical item and update external state only when the corresponding work actually begins or completes.
 7. Preserve existing tracker-to-Git automation instead of producing duplicate status changes or comments. Ask the maintainer only when the canonical tracker, state mapping, or mutation authority remains unclear.
+
+## External Service Boundaries
+
+When the project adopts hosted secrets, deployment, data, or documentation services:
+
+1. Inspect repository configuration, existing integrations, deployment history, and available external capabilities before asking which services are authoritative.
+2. Identify the canonical source for each kind of state. Keep code, migrations, deployment configuration, and docs-as-code in the repository unless the project explicitly establishes another source.
+3. If Doppler is the canonical secret manager, document its outbound syncs and avoid separately managed copies in Vercel, Supabase, CI, or other destinations.
+4. Document service relationships and environment boundaries in `.agents/ARCHITECTURE.md`; put exact verified local or CI commands in `.agents/COMMANDS.md`.
+5. Keep and tailor only the relevant files under `.agents/mcp/`. These files describe capability intent and least-privilege scope; they do not contain credentials or silently install host integrations.
+6. Prefer project-scoped, read-only, development access for inspection. Require explicit authorization for secret writes, deployments, production access, database mutations, domain changes, or authenticated documentation edits.
+7. Verify external changes through the provider after making them. If access or permission is unavailable, report the limitation and record genuine unresolved setup work in `.agents/TODO.md`.
 
 ## Good Maintainer Questions
 
