@@ -45,8 +45,9 @@ This directory is recoverable migration input, not durable project context. Do n
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
 9. When hosted secrets, deployment, data, or documentation services are adopted, complete the service-boundary reconciliation in [External Service Boundaries](#external-service-boundaries).
 10. Complete the prerequisite reconciliation in [Tooling And Host Capabilities](#tooling-and-host-capabilities).
-11. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-12. Rewrite the scaffold canonical files into concise target-specific documentation:
+11. Reconcile tests and static checks using [Quality Baseline](#quality-baseline).
+12. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
+13. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -54,10 +55,10 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/presets/`
    - `.agents/skills/`
    - `.agents/mcp/`
-13. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-14. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-15. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-16. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+14. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+15. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+16. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+17. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
 
 ## GitHub Flow Protection
 
@@ -107,6 +108,18 @@ Reconcile tools only after determining which project workflows and external capa
 5. Document only adopted, verified invocations and version constraints in `.agents/COMMANDS.md`. Keep host-specific MCP configuration as a thin adapter to `.agents/mcp/` capability intent.
 6. Do not install Homebrew, a language runtime, global npm packages, provider CLIs, credentials, or user-level MCP configuration without explicit authorization. Do not treat the presence of a capability template as authorization to connect it.
 7. If a required project command cannot run because a tool or authenticated capability is unavailable, report the exact gap and record genuine unresolved setup work in `.agents/TODO.md`. Do not claim the command or integration was verified.
+
+## Quality Baseline
+
+Bootstrap must account explicitly for the repository's behavior verification and static checks. Do not treat a missing test, lint, format, typecheck, or build command as evidence that it is unnecessary.
+
+1. Inspect package scripts, dependency manifests, tool configuration, source layout, CI workflows, and representative tests.
+2. Identify the smallest appropriate baseline. Application, service, and library code normally need automated behavior verification plus relevant static checks. Documentation, configuration, generated-code, or similarly specialized repositories may use build, schema, link, integration, or other focused validation instead of unit tests.
+3. Preserve established tools and conventions. Do not introduce a second toolchain for a check the repository already performs.
+4. If a necessary category is absent, surface it as a material bootstrap decision. Obtain maintainer approval before adding dependencies, configuration, CI workflows, or representative tests.
+5. When approved, establish the minimum ecosystem-native baseline and define fast and full verification in `.agents/COMMANDS.md`, including a focused or single-test command when supported.
+6. Run each documented command before recording it as known-good. Add stable baseline checks to CI and required-check guidance in proportion to repository risk.
+7. If a check is intentionally absent or cannot yet be added, document the rationale and record actionable unresolved work in `.agents/TODO.md`. Do not silently omit it or claim the baseline is complete.
 
 ## Good Maintainer Questions
 

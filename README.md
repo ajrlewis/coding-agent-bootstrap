@@ -416,11 +416,14 @@ A first-run coding agent should:
 7. When an external tracker is adopted, keep it canonical and document its work-item-to-branch-to-pull-request lifecycle without mirroring the backlog.
 8. For adopted hosted services, document canonical state, sync direction, environment boundaries, and authorization requirements without duplicating credentials or provider state.
 9. Verify only the command-line tools and host capabilities required by adopted workflows; do not install global tools or connect external accounts implicitly.
-10. Ask only for constraints or conflicts that cannot be reliably resolved.
-11. Rewrite the canonical scaffold files as concise target-specific context.
-12. Validate documented commands where practical and report anything that could not be run.
-13. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
-14. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
+10. Reconcile an appropriate quality baseline, treating absent tests or static checks as an explicit decision rather than an implicit exemption.
+11. Ask only for constraints or conflicts that cannot be reliably resolved.
+12. Rewrite the canonical scaffold files as concise target-specific context.
+13. Validate documented commands where practical and report anything that could not be run.
+14. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
+15. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
+
+For code-bearing repositories, bootstrap checks for automated behavior verification and relevant static analysis. It does not blindly require unit tests: documentation, configuration, generated-code, and other specialized projects may need build, schema, link, integration, or similar validation instead. Adding dependencies, configuration, tests, or CI remains an explicit maintainer decision, and intentionally absent or blocked checks are recorded rather than silently ignored.
 
 Never claim a check passed unless it was actually run. Relevant verification comes from the target's `.agents/COMMANDS.md`; bootstrap does not hard-code every possible check for every task.
 
