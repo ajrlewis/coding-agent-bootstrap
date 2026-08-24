@@ -42,8 +42,9 @@ This directory is recoverable migration input, not durable project context. Do n
 5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as skills, and useful MCP capabilities.
 6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt `.agents/presets/git/github-flow.md` as the default.
 7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection).
-8. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-9. Rewrite the scaffold canonical files into concise target-specific documentation:
+8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
+9. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
+10. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -51,10 +52,10 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/presets/`
    - `.agents/skills/`
    - `.agents/mcp/`
-10. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-11. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-12. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-13. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+11. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+12. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+13. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+14. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
 
 ## GitHub Flow Protection
 
@@ -68,6 +69,18 @@ When the repository adopts GitHub Flow:
 6. Verify the effective settings after any change. If authentication, repository administration permission, or supported GitHub access is unavailable, record the unresolved protection work in `.agents/TODO.md`, report it clearly, and do not claim remote protection was configured.
 
 Do not add GitHub CLI or another provider SDK as a project dependency solely for this check. Remote protection belongs to the agent-led bootstrap procedure, not the mechanical file installer.
+
+## External Work Tracking
+
+When Linear or another external tracker is the canonical backlog:
+
+1. Inspect existing contributor guidance, integrations, issue identifiers in branch or pull-request history, and available external capabilities before asking how work is tracked.
+2. Keep the external tracker as the single source of truth. Do not copy its backlog or issue bodies into `.agents/TODO.md` or create another durable mirror in the repository.
+3. Keep and tailor the relevant file under `.agents/mcp/`; remove tracker capability files the project does not use. Grant the narrowest workspace, team, project, and write access that supports the adopted workflow.
+4. Document the issue-to-branch-to-pull-request lifecycle in `.agents/WORKFLOW.md`, including actual status transitions and any existing automation.
+5. Use one branch per work item by default and include its stable identifier. Choose the branch prefix from the change type, such as `feature/ENG-123-add-export`, `fix/ENG-124-handle-empty-response`, or `chore/ENG-125-update-dependencies`; do not classify every tracked item as a chore.
+6. Fetch current work-item details through the configured capability before implementation. Link the pull request to the canonical item and update external state only when the corresponding work actually begins or completes.
+7. Preserve existing tracker-to-Git automation instead of producing duplicate status changes or comments. Ask the maintainer only when the canonical tracker, state mapping, or mutation authority remains unclear.
 
 ## Good Maintainer Questions
 

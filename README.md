@@ -188,7 +188,9 @@ Skills describe recurring specialized procedures:
 
 ## MCP
 
-`.agents/mcp/` expresses desired external capability intent, such as GitHub, PostgreSQL, or Supabase access. Each definition describes purpose, requirement level, expected scope, configuration, and security concerns.
+`.agents/mcp/` expresses desired external capability intent, such as GitHub, Linear, PostgreSQL, or Supabase access. Each definition describes purpose, requirement level, expected scope, configuration, and security concerns.
+
+When Linear is the canonical work tracker, its issues remain the source of truth rather than being copied into agent files. The adopted workflow can fetch the current item through MCP, move it through real project states, create a typed branch containing the issue identifier, link the pull request, and complete the item after the corresponding work is complete. `.agents/TODO.md` remains for agent-relevant follow-up work, not a mirrored backlog.
 
 Actual host configuration varies across Codex, Claude Code, Cursor, and other environments. Host-specific integration should remain a thin adapter to canonical intent. Never store credential values in these files.
 
@@ -376,11 +378,12 @@ A first-run coding agent should:
 4. Discover the stack, commands, architecture, workflow, conventions, useful skills, and desired external capabilities.
 5. Reconcile compatible existing intent, deduplicate it, and surface meaningful policy conflicts.
 6. When GitHub Flow is adopted, detect the remote default branch and verify its protection, changing remote settings only with explicit maintainer authorization.
-7. Ask only for constraints or conflicts that cannot be reliably resolved.
-8. Rewrite the canonical scaffold files as concise target-specific context.
-9. Validate documented commands where practical and report anything that could not be run.
-10. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
-11. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
+7. When an external tracker is adopted, keep it canonical and document its work-item-to-branch-to-pull-request lifecycle without mirroring the backlog.
+8. Ask only for constraints or conflicts that cannot be reliably resolved.
+9. Rewrite the canonical scaffold files as concise target-specific context.
+10. Validate documented commands where practical and report anything that could not be run.
+11. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
+12. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
 
 Never claim a check passed unless it was actually run. Relevant verification comes from the target's `.agents/COMMANDS.md`; bootstrap does not hard-code every possible check for every task.
 

@@ -6,6 +6,20 @@ Inspect existing contributor documentation, CI, branch policy, task runners, tes
 
 If no project-specific Git policy exists, use `.agents/presets/git/github-flow.md`. It defines when to sync with `origin/main` and requires relevant verification after conflict resolution.
 
+When Linear or another external tracker is the canonical backlog, keep work-item content there rather than mirroring it into `.agents/TODO.md` or another repository file. Document the target project's state transitions and linking conventions here. A typical tracked workflow is:
+
+```text
+select a work item
+-> fetch its current details through the configured external capability
+-> mark it started when implementation actually begins
+-> create a typed branch containing the work-item identifier
+-> implement and verify the change
+-> open a linked pull request
+-> update or complete the work item when the corresponding event occurs
+```
+
+Use one branch per work item by default. Split a parent item when it needs multiple independently reviewable changes. Preserve existing tracker or Git-host automation instead of duplicating its status updates manually.
+
 Adapt the normal loop where appropriate:
 
 ```text
