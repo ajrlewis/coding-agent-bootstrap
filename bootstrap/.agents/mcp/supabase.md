@@ -20,6 +20,10 @@ Keep schema migrations, edge-function source, generated types, and other version
 
 Use least-privilege access. Scope the official hosted MCP server to the relevant project, enable read-only mode for inspection, and expose only the feature groups needed for the task. Development access does not imply production access. Applying migrations, changing data or policies, deploying functions, managing branches, or changing production configuration requires explicit authorization.
 
+## Local Tooling
+
+Supabase's hosted remote MCP server does not require the `supabase` CLI. Local development, migrations, type generation, or a local Supabase MCP endpoint do require the CLI; prefer a pinned project development dependency. Running the local stack also requires a compatible container runtime. Record the package-runner form the repository adopts.
+
 ## Configuration
 
 Prefer the official hosted MCP server and OAuth when supported. Keep the project reference and host-specific authentication outside the repository where practical. The server supports project scoping, read-only access, and feature-group restrictions; use all three proportionally. Record exact verified local Supabase commands in `.agents/COMMANDS.md`.

@@ -4,6 +4,8 @@
 
 Inspect package manifests, project configuration, Makefiles, task runners, CI workflows, Docker configuration, existing documentation, and test configuration.
 
+Identify the tooling required to run the commands the project actually adopts. Record the expected invocation, such as `pnpm supabase` versus a global `supabase`, and any verified runtime or version constraint. Prefer a pinned project dependency or an existing project tool manager over a new global installation. Do not list every optional provider CLI merely because a reusable MCP capability file exists.
+
 Document only applicable commands. Possible sections include install, development, build, lint, format, typecheck or compile, unit tests, integration tests, end-to-end tests, single-test invocation, database, migrations, fast verification, full verification, and release.
 
 Verify commands where practical before recording them. Never claim a command passed unless it was actually executed. If a relevant check cannot be run, state what was not run and why.
