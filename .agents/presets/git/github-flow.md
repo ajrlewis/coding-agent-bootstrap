@@ -12,4 +12,4 @@ This repository uses focused branches and pull requests into `main`.
 - Inspect CI, required checks, mergeability, and review feedback before considering the change ready.
 - Never bypass required checks, rewrite shared history casually, or force-push a shared branch without explicit policy and clear intent.
 
-Protect `main` with a GitHub ruleset that requires pull requests and relevant checks, and blocks direct pushes, force pushes, and deletion. Add approval or up-to-date branch requirements when repository risk warrants them.
+Protect `main` with a GitHub rule that requires pull requests, applies to administrators, and blocks direct pushes, force pushes, and deletion. This solo-maintainer repository does not require an approving review because pull request authors cannot approve their own changes. Add required checks or an up-to-date branch requirement when the repository's CI and merge strategy warrant them.

@@ -41,8 +41,9 @@ This directory is recoverable migration input, not durable project context. Do n
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
 5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as skills, and useful MCP capabilities.
 6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt `.agents/presets/git/github-flow.md` as the default.
-7. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-8. Rewrite the scaffold canonical files into concise target-specific documentation:
+7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection).
+8. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
+9. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -50,10 +51,23 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/presets/`
    - `.agents/skills/`
    - `.agents/mcp/`
-9. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-10. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-11. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-12. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+10. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+11. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+12. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+13. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+
+## GitHub Flow Protection
+
+When the repository adopts GitHub Flow:
+
+1. Detect whether `origin` is hosted on GitHub and identify the remote default branch instead of assuming it is named `main`.
+2. Inspect the default branch's current GitHub ruleset or branch protection through an authenticated GitHub API client when access is available.
+3. For a shared repository, require pull requests with at least one approving review, enforce the rule for administrators, and block force pushes and branch deletion. These settings must prevent direct pushes to the default branch.
+4. In a solo repository, surface that authors cannot approve their own pull requests and ask the maintainer whether to require an external approval. Still require pull requests and prevent direct and force pushes unless the maintainer explicitly adopts another policy.
+5. Obtain explicit maintainer authorization before creating or changing remote repository settings. Local workflow instructions do not by themselves authorize an external mutation.
+6. Verify the effective settings after any change. If authentication, repository administration permission, or supported GitHub access is unavailable, record the unresolved protection work in `.agents/TODO.md`, report it clearly, and do not claim remote protection was configured.
+
+Do not add GitHub CLI or another provider SDK as a project dependency solely for this check. Remote protection belongs to the agent-led bootstrap procedure, not the mechanical file installer.
 
 ## Good Maintainer Questions
 

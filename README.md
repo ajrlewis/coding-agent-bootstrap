@@ -171,7 +171,7 @@ The name `presets` is intentional. A template suggests copying content blindly. 
 
 Existing project conventions take precedence over generic presets. The first agent removes presets that are not relevant and tailors those the target adopts.
 
-The default Git preset uses focused branches, merges the latest `origin/main` into the branch before pushing or updating a PR, reruns relevant verification after conflict resolution, and recommends protecting `main` with GitHub branch rules.
+The default Git preset uses focused branches, merges the latest `origin/main` into the branch before pushing or updating a PR, and reruns relevant verification after conflict resolution. When GitHub Flow is adopted, the agent-led bootstrap also verifies protection of the remote default branch. Shared repositories require pull requests, at least one approval, administrator enforcement, and blocked force pushes and deletion. Remote settings are changed only with explicit maintainer authorization; unavailable access is recorded as unresolved follow-up work.
 
 ## Skills
 
@@ -375,11 +375,12 @@ A first-run coding agent should:
 3. Read `.coding-agent-bootstrap/existing/` when merge state is present and inspect other existing agent guidance.
 4. Discover the stack, commands, architecture, workflow, conventions, useful skills, and desired external capabilities.
 5. Reconcile compatible existing intent, deduplicate it, and surface meaningful policy conflicts.
-6. Ask only for constraints or conflicts that cannot be reliably resolved.
-7. Rewrite the canonical scaffold files as concise target-specific context.
-8. Validate documented commands where practical and report anything that could not be run.
-9. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
-10. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
+6. When GitHub Flow is adopted, detect the remote default branch and verify its protection, changing remote settings only with explicit maintainer authorization.
+7. Ask only for constraints or conflicts that cannot be reliably resolved.
+8. Rewrite the canonical scaffold files as concise target-specific context.
+9. Validate documented commands where practical and report anything that could not be run.
+10. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
+11. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
 
 Never claim a check passed unless it was actually run. Relevant verification comes from the target's `.agents/COMMANDS.md`; bootstrap does not hard-code every possible check for every task.
 
