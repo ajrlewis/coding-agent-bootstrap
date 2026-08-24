@@ -5,11 +5,12 @@ REPOSITORY_URL=${CAB_INSTALL_REPOSITORY:-https://github.com/ajrlewis/coding-agen
 REPOSITORY_REF=${CAB_INSTALL_REF:-main}
 
 usage() {
-  echo "Usage: install.sh [--merge] [target-repository]"
+  echo "Usage: install.sh [--merge] [--allow-current-branch] [target-repository]"
   echo
   echo "Options:"
-  echo "  --merge    Preserve existing coding-agent configuration for semantic migration."
-  echo "  -h, --help Show this help."
+  echo "  --merge                 Preserve existing coding-agent configuration for semantic migration."
+  echo "  --allow-current-branch  Allow installation on the repository's default branch."
+  echo "  -h, --help              Show this help."
 }
 
 path_exists() {
@@ -33,12 +34,16 @@ remove_path() {
 }
 
 MERGE_MODE=0
+ALLOW_CURRENT_BRANCH=0
 TARGET_ARGUMENT=
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --merge)
       MERGE_MODE=1
+      ;;
+    --allow-current-branch)
+      ALLOW_CURRENT_BRANCH=1
       ;;
     -h|--help)
       usage
@@ -147,6 +152,11 @@ if [ ! -d "$TARGET_DIR/.git" ]; then
   exit 1
 fi
 
+if ! command -v git >/dev/null 2>&1; then
+  echo "error: Git is required to inspect the target repository" >&2
+  exit 1
+fi
+
 SOURCE_DIR=
 case "$0" in
   sh|-sh|dash|-dash|bash|-bash|zsh|-zsh)
@@ -163,6 +173,27 @@ if [ -n "$SOURCE_DIR" ] && [ -f "$SOURCE_DIR/bootstrap/AGENTS.md" ] && [ -d "$SO
     echo "error: source and target are the same directory" >&2
     echo "Run the installer from inside the target repository via curl, or pass a different target path." >&2
     exit 1
+  fi
+fi
+
+if [ "$ALLOW_CURRENT_BRANCH" -eq 0 ] && git -C "$TARGET_DIR" rev-parse --verify HEAD >/dev/null 2>&1; then
+  CURRENT_BRANCH=$(git -C "$TARGET_DIR" symbolic-ref --quiet --short HEAD 2>/dev/null || :)
+  if [ -n "$CURRENT_BRANCH" ]; then
+    DEFAULT_BRANCH=$(git -C "$TARGET_DIR" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null || :)
+    DEFAULT_BRANCH=${DEFAULT_BRANCH#origin/}
+    if [ -z "$DEFAULT_BRANCH" ]; then
+      case "$CURRENT_BRANCH" in
+        main|master) DEFAULT_BRANCH=$CURRENT_BRANCH ;;
+      esac
+    fi
+
+    if [ -n "$DEFAULT_BRANCH" ] && [ "$CURRENT_BRANCH" = "$DEFAULT_BRANCH" ]; then
+      echo "error: refusing to install on the repository's default branch: $CURRENT_BRANCH" >&2
+      echo "Create a focused branch first:" >&2
+      echo "  git switch -c chore/coding-agent-bootstrap" >&2
+      echo "Or re-run with --allow-current-branch if this is intentional." >&2
+      exit 1
+    fi
   fi
 fi
 
@@ -194,11 +225,6 @@ fi
 if [ -n "$SOURCE_DIR" ] && [ -f "$SOURCE_DIR/bootstrap/AGENTS.md" ] && [ -d "$SOURCE_DIR/bootstrap/.agents" ]; then
   PAYLOAD_DIR=$SOURCE_DIR/bootstrap
 else
-  if ! command -v git >/dev/null 2>&1; then
-    echo "error: Git is required to fetch the bootstrap payload" >&2
-    exit 1
-  fi
-
   DOWNLOAD_DIR=$(mktemp -d "${TMPDIR:-/tmp}/coding-agent-bootstrap.XXXXXX")
   echo "Fetching coding-agent-bootstrap..."
   if ! git clone --quiet --depth 1 --branch "$REPOSITORY_REF" "$REPOSITORY_URL" "$DOWNLOAD_DIR/repository"; then

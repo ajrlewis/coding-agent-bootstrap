@@ -27,4 +27,5 @@
 - Only the payload contains `.agents/BOOTSTRAP.md`; installed repositories remove it after first-run configuration.
 - Installed target repositories should keep only adopted presets, useful skills, and desired MCP capabilities.
 - Default installation must refuse existing `AGENTS.md`, `CLAUDE.md`, or `.agents/`. Merge mode must preserve them before replacement and retain recoverable state on failure.
+- Installers must refuse a committed default branch unless the user supplies the explicit current-branch override; unborn repositories remain installable.
 - `.coding-agent-bootstrap/` is temporary merge state and must remain until semantic migration is validated.

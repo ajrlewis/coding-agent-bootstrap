@@ -1,5 +1,6 @@
 param(
     [switch]$Merge,
+    [switch]$AllowCurrentBranch,
     [Parameter(Position = 0)]
     [string]$TargetRepository = (Get-Location).Path
 )
@@ -73,6 +74,10 @@ try {
         throw "target is not a Git repository: $targetDir. Initialize Git first with: git init"
     }
 
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+        throw "Git is required to inspect the target repository"
+    }
+
     $sourceDir = $null
     if ($PSScriptRoot -and
         (Test-Path -LiteralPath (Join-Path $PSScriptRoot "bootstrap\AGENTS.md") -PathType Leaf) -and
@@ -82,6 +87,34 @@ try {
 
     if ($sourceDir -and $sourceDir -eq $targetDir) {
         throw "source and target are the same directory. Run the remote installer from the target, or pass a different target path."
+    }
+
+    if (-not $AllowCurrentBranch) {
+        & git -C $targetDir rev-parse --verify HEAD *> $null
+        $hasCommit = $LASTEXITCODE -eq 0
+        if ($hasCommit) {
+            $currentBranch = & git -C $targetDir symbolic-ref --quiet --short HEAD 2>$null
+            if ($LASTEXITCODE -ne 0) {
+                $currentBranch = $null
+            }
+
+            if ($currentBranch) {
+                $defaultBranch = & git -C $targetDir symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>$null
+                if ($LASTEXITCODE -ne 0) {
+                    $defaultBranch = $null
+                }
+                if ($defaultBranch -and $defaultBranch.StartsWith("origin/")) {
+                    $defaultBranch = $defaultBranch.Substring("origin/".Length)
+                }
+                if (-not $defaultBranch -and $currentBranch -in @("main", "master")) {
+                    $defaultBranch = $currentBranch
+                }
+
+                if ($defaultBranch -and $currentBranch -eq $defaultBranch) {
+                    throw "refusing to install on the repository's default branch: $currentBranch. Create a focused branch first with: git switch -c chore/coding-agent-bootstrap. Re-run with -AllowCurrentBranch if this is intentional."
+                }
+            }
+        }
     }
 
     $existingAgentsMd = Test-Path -LiteralPath (Join-Path $targetDir "AGENTS.md")
@@ -106,10 +139,6 @@ try {
         $payloadDir = Join-Path $sourceDir "bootstrap"
     }
     else {
-        if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-            throw "Git is required to fetch the bootstrap payload"
-        }
-
         $downloadDir = Join-Path ([System.IO.Path]::GetTempPath()) ("coding-agent-bootstrap-" + [guid]::NewGuid().ToString("N"))
         New-Item -ItemType Directory -Path $downloadDir | Out-Null
         $checkoutDir = Join-Path $downloadDir "repository"
