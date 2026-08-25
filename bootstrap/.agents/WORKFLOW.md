@@ -36,4 +36,6 @@ understand task
 
 Do not require every possible check for every task. Define relevant fast and full verification in `.agents/COMMANDS.md` based on the actual project.
 
+During bootstrap, account explicitly for the repository's behavior verification and static checks. A missing test or linting category requires a documented rationale, an approved baseline addition, or an actionable entry in `.agents/TODO.md`; it is not an implicit exemption.
+
 Remove this scaffold guidance after documenting the target-specific workflow.
