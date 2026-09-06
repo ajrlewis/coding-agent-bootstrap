@@ -106,7 +106,6 @@ coding-agent-bootstrap/
 │       ├── ARCHITECTURE.md
 │       ├── TODO.md
 │       ├── presets/
-│       ├── skills/
 │       └── mcp/
 ├── tests/
 │   └── install.sh
@@ -115,7 +114,7 @@ coding-agent-bootstrap/
 └── install.bat
 ```
 
-The root keeps only presets, skills, and MCP intent actually adopted by this project. The full reusable library lives in `bootstrap/` because it is discovery material for target repositories.
+The root keeps only presets, skills, and MCP intent actually adopted by this project. The reusable preset and MCP libraries live in `bootstrap/` because they are discovery material for target repositories.
 
 ## Installed Context
 
@@ -133,13 +132,12 @@ target-project/
     ├── ARCHITECTURE.md
     ├── TODO.md
     ├── presets/
-    ├── skills/
     └── mcp/
 ```
 
 The root development configuration, README, installers, and tests are never copied.
 
-After setup, `.agents/BOOTSTRAP.md` and any `.coding-agent-bootstrap/` migration state are removed. Only project-relevant presets, skills, and MCP capabilities remain.
+After setup, `.agents/BOOTSTRAP.md` and any `.coding-agent-bootstrap/` migration state are removed. Only project-relevant presets, project-specific skills, and MCP capabilities remain.
 
 ## Canonical Context
 
@@ -184,7 +182,7 @@ Skills describe recurring specialized procedures:
 └── scripts/
 ```
 
-`SKILL.md` tells the agent what to do, `references/` contains deeper knowledge the procedure may require, and `scripts/` contains reusable supporting tooling. The payload includes only a few examples because routine work does not need a dedicated skill.
+`SKILL.md` tells the agent what to do, `references/` contains deeper knowledge the procedure may require, and `scripts/` contains reusable supporting tooling. This repository may keep project-specific skills in its root `.agents/`, but the installable payload does not bundle generic skills.
 
 ## MCP
 
