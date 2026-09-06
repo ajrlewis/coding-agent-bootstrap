@@ -16,6 +16,10 @@ Optional by default. Required only when Vercel-hosted state affects the task and
 
 Keep application code and deployment configuration in the repository. Treat Vercel as the source of truth for live deployment state. When Doppler is the canonical secret manager and syncs values to Vercel, do not create or edit duplicate environment values directly in Vercel unless the maintainer explicitly adopts that exception.
 
+## Git And CI/CD
+
+When Git-based CI is adopted, require relevant CI checks before merging into the production branch. For GitHub-connected projects, prefer Vercel Deployment Checks so a production deployment is not promoted or assigned to production domains until the selected GitHub Actions succeed. Treat bypassing these checks as a production-affecting action that requires explicit authorization.
+
 ## Expected Scope
 
 Prefer access limited to the relevant account, team, and project. Read deployments and logs as needed. Creating, promoting, rolling back, or cancelling deployments, changing domains or project settings, editing environment variables, or affecting production requires explicit authorization.
