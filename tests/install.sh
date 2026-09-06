@@ -70,6 +70,7 @@ make_git_repo local-target
 [ -f "$TEST_REPO/.agents/mcp/mintlify.md" ] || fail "Mintlify MCP capability was not installed"
 [ -f "$TEST_REPO/.agents/mcp/supabase.md" ] || fail "Supabase MCP capability was not installed"
 [ -f "$TEST_REPO/.agents/mcp/vercel.md" ] || fail "Vercel MCP capability was not installed"
+[ ! -e "$TEST_REPO/.agents/skills" ] || fail "removed generic skills were installed"
 [ "$(sed -n '1p' "$TEST_REPO/.agents/VERSION")" = "3" ] || fail "payload version is not 3"
 cmp "$ROOT_DIR/bootstrap/AGENTS.md" "$TEST_REPO/AGENTS.md" >/dev/null || fail "installed AGENTS.md does not match payload"
 cmp "$ROOT_DIR/bootstrap/.agents/ARCHITECTURE.md" "$TEST_REPO/.agents/ARCHITECTURE.md" >/dev/null || fail "installed architecture does not match payload"

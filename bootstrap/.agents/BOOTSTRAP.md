@@ -39,7 +39,7 @@ This directory is recoverable migration input, not durable project context. Do n
    - Discovered facts: directly observable in the repository.
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
-5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as skills, and useful MCP capabilities.
+5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as project-specific skills, and useful MCP capabilities.
 6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt `.agents/presets/git/github-flow.md` as the default.
 7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection).
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
@@ -53,9 +53,9 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/ARCHITECTURE.md`
    - `.agents/TODO.md`
    - `.agents/presets/`
-   - `.agents/skills/`
+   - `.agents/skills/` when the project has reusable task procedures
    - `.agents/mcp/`
-14. Tailor adopted presets to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+14. Tailor adopted presets and project-specific skills to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
 15. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
 16. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
 17. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.

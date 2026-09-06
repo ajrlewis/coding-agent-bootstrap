@@ -19,7 +19,7 @@ Define success. Test the result. Do not declare completion without evidence.
 - `.agents/ARCHITECTURE.md` - system boundaries and invariants.
 - `.agents/TODO.md` - persistent agent-managed follow-up work.
 - `.agents/presets/` - adopted engineering conventions.
-- `.agents/skills/` - recurring specialized procedures.
+- `.agents/skills/` - recurring specialized procedures, when the project defines them.
 - `.agents/mcp/` - desired external capabilities.
 
 If `.agents/BOOTSTRAP.md` exists, complete it before normal project work.

@@ -25,7 +25,7 @@ Adapt the normal loop where appropriate:
 ```text
 understand task
 -> inspect relevant code, tests, and context
--> read relevant presets and skills
+-> read relevant presets and project-specific skills
 -> form a plan for non-trivial work
 -> make narrow changes
 -> run relevant verification from .agents/COMMANDS.md
