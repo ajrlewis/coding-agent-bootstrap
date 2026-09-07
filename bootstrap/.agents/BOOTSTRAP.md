@@ -66,9 +66,11 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/skills/` when the project has reusable task procedures
    - `.agents/mcp/`
 14. Tailor adopted presets and project-specific skills to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-15. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-16. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-17. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+15. After deleting unselected files, remove every empty directory at or below `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, working from the deepest directories upward. Remove an empty managed root as well; preserve the canonical `.agents/` directory itself.
+16. Inspect the resulting filesystem tree with `find .agents -print` or a platform-equivalent command. Do not rely on Git status, because Git does not report empty directories. Bootstrap is incomplete while an empty template directory remains.
+17. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+18. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+19. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
 
 Do not create parallel substitutes such as `.agents/WORKFLOWS.md` or `.agents/CHECKLISTS.md` during bootstrap. Add a non-canonical file only when the target project has a distinct, durable need for it, and route to it from the canonical context where appropriate.
 
@@ -160,6 +162,7 @@ Bootstrap must account explicitly for the repository's behavior verification and
 - Treating presets as higher authority than the existing codebase.
 - Silently choosing between conflicting existing and bootstrap policies.
 - Keeping every bootstrap preset in the target repository.
+- Leaving empty preset, skill, or MCP directories after removing their template files.
 - Leaving scaffold instructions in canonical files instead of replacing them with project facts.
 - Turning `.agents/TODO.md` into a per-task plan or product backlog.
 - Removing preserved configuration before migration has been reviewed and validated.
