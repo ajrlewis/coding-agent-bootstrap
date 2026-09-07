@@ -22,7 +22,7 @@ Define success. Test the result. Do not declare completion without evidence.
 - `.agents/skills/` - recurring specialized procedures, when the project defines them.
 - `.agents/mcp/` - desired external capabilities.
 
-If `.agents/BOOTSTRAP.md` exists, complete it before normal project work.
+If `.agents/BOOTSTRAP.md` exists, complete it before normal project work. During bootstrap, preserve this file and `CLAUDE.md` unchanged; project-specific context belongs in the routed `.agents/` files.
 
 ## Definition Of Done
 

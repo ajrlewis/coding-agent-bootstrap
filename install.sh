@@ -277,5 +277,10 @@ if [ "$HAS_EXISTING" -eq 1 ]; then
   echo "  .coding-agent-bootstrap/existing/"
 fi
 echo
-echo "Next: start a coding-agent session in the target repository."
-echo "The agent should read AGENTS.md and complete .agents/BOOTSTRAP.md before normal project work."
+echo "Canonical files installed."
+echo
+echo "Next:"
+echo "- Read AGENTS.md and complete .agents/BOOTSTRAP.md before normal project work."
+echo "- For README-first repositories, treat README.md as the target-state specification."
+echo "- Do not scaffold or implement the application unless separately requested."
+echo "- Preserve AGENTS.md and CLAUDE.md unchanged; put project context in the routed .agents files."

@@ -194,8 +194,13 @@ try {
         Write-Host "  .coding-agent-bootstrap/existing/"
     }
     Write-Host ""
-    Write-Host "Next: start a coding-agent session in the target repository."
-    Write-Host "The agent should read AGENTS.md and complete .agents/BOOTSTRAP.md before normal project work."
+    Write-Host "Canonical files installed."
+    Write-Host ""
+    Write-Host "Next:"
+    Write-Host "- Read AGENTS.md and complete .agents/BOOTSTRAP.md before normal project work."
+    Write-Host "- For README-first repositories, treat README.md as the target-state specification."
+    Write-Host "- Do not scaffold or implement the application unless separately requested."
+    Write-Host "- Preserve AGENTS.md and CLAUDE.md unchanged; put project context in the routed .agents files."
 }
 catch {
     $installError = $_
