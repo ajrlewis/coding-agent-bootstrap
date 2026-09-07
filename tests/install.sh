@@ -61,7 +61,9 @@ echo "Testing local installation..."
 "$ROOT_DIR/install.sh" --help >"$TEST_ROOT/help-output"
 grep -F "install.sh [--merge] [--allow-current-branch] [target-repository]" "$TEST_ROOT/help-output" >/dev/null || fail "help omits installer options"
 make_git_repo local-target
-"$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
+printf '%s\n' "# Product specification" "" "Build the application described here." >"$TEST_REPO/README.md"
+cp -p "$TEST_REPO/README.md" "$TEST_ROOT/readme-expected"
+"$ROOT_DIR/install.sh" "$TEST_REPO" >"$TEST_ROOT/install-output"
 [ -f "$TEST_REPO/AGENTS.md" ] || fail "AGENTS.md was not installed"
 [ -f "$TEST_REPO/CLAUDE.md" ] || fail "CLAUDE.md was not installed"
 [ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "BOOTSTRAP.md was not installed"
@@ -79,6 +81,11 @@ if cmp "$ROOT_DIR/.agents/ARCHITECTURE.md" "$TEST_REPO/.agents/ARCHITECTURE.md" 
 fi
 assert_no_staging_files "$TEST_REPO"
 [ ! -e "$TEST_REPO/.coding-agent-bootstrap" ] || fail "clean install created migration state"
+cmp "$TEST_ROOT/readme-expected" "$TEST_REPO/README.md" >/dev/null || fail "README-first installation changed the product specification"
+grep -F "Canonical files installed." "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits canonical installation status"
+grep -F "For README-first repositories, treat README.md as the target-state specification." "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits README-first guidance"
+grep -F "Do not scaffold or implement the application unless separately requested." "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits the implementation boundary"
+grep -F "Preserve AGENTS.md and CLAUDE.md unchanged" "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits the canonical entrypoint invariant"
 
 echo "Testing default-branch refusal..."
 make_committed_git_repo default-branch

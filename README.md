@@ -28,7 +28,17 @@ On Windows PowerShell, install after the same branch check:
 irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1 | iex
 ```
 
-Then start a coding-agent session in the target repository. The agent will see `AGENTS.md` and `.agents/BOOTSTRAP.md`, inspect the project, replace the scaffolds with project-specific context, and remove `BOOTSTRAP.md` when setup is complete.
+Then start a coding-agent session in the target repository. The agent will see `AGENTS.md` and `.agents/BOOTSTRAP.md`, inspect the project, replace the routed `.agents/` scaffolds with project-specific context, and remove `BOOTSTRAP.md` when setup is complete. `AGENTS.md` and `CLAUDE.md` are canonical entrypoints and remain unchanged.
+
+For a README-first repository, use this prompt instead of the ambiguous phrase "bootstrap from the README":
+
+```text
+Run coding-agent-bootstrap for this repository. Treat README.md as the
+maintainer-declared product specification. Install the canonical agent files,
+complete .agents/BOOTSTRAP.md, and do not scaffold or implement the application.
+```
+
+When installation is delegated to an agent, require it to perform a discovery gate before writing any files: check for `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/`, locate the canonical coding-agent-bootstrap installer or templates, and determine whether "bootstrap" means agent configuration or application scaffolding. If the intended operation or canonical source cannot be resolved, the agent should ask rather than improvise agent files or write project code.
 
 The default command refuses existing `AGENTS.md`, `CLAUDE.md`, or `.agents/`. For a mature repository, use the explicit [merge workflow](#existing-agent-configuration).
 

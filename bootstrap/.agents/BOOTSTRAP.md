@@ -1,12 +1,22 @@
 # Bootstrap Procedure
 
-This file is temporary. Its presence means coding-agent setup is not complete.
+This file is temporary. Its presence means coding-agent setup is not complete. Complete this procedure before writing project code.
 
-The canonical Markdown files installed beside it are temporary writing scaffolds. Rewrite them as concise, target-project-specific context; do not leave generic bootstrap prose in place indefinitely.
+The routed `.agents/WORKFLOW.md`, `.agents/COMMANDS.md`, `.agents/ARCHITECTURE.md`, and `.agents/TODO.md` files are temporary writing scaffolds. Rewrite them as concise, target-project-specific context; do not leave generic bootstrap prose in place indefinitely. Root `AGENTS.md` and `CLAUDE.md` are canonical entrypoints, not writing scaffolds; preserve them unchanged during bootstrap.
 
 ## Goal
 
 Inspect the target repository, reconcile any existing agent configuration, generate concise project-specific context, validate important assumptions, then remove temporary bootstrap state.
+
+## Mandatory Discovery Gate
+
+Before changing project code or agent configuration:
+
+1. Confirm that this file is the canonical procedure being completed.
+2. Check for `.coding-agent-bootstrap/` and reconcile it as migration state when present.
+3. Treat root `AGENTS.md`, `CLAUDE.md`, and the canonical `.agents/` filenames as the installed contract. Do not replace them with an improvised hierarchy.
+4. Determine whether the maintainer requested coding-agent configuration, application scaffolding, or both. The word "bootstrap" alone is not authorization to implement the application.
+5. If the intended operation or canonical source remains unclear, ask the maintainer before writing files.
 
 ## Existing Configuration Migration
 
@@ -59,6 +69,8 @@ This directory is recoverable migration input, not durable project context. Do n
 15. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
 16. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
 17. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+
+Do not create parallel substitutes such as `.agents/WORKFLOWS.md` or `.agents/CHECKLISTS.md` during bootstrap. Add a non-canonical file only when the target project has a distinct, durable need for it, and route to it from the canonical context where appropriate.
 
 ## README-First Projects
 
