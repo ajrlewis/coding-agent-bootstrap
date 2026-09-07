@@ -147,7 +147,7 @@ target-project/
 
 The root development configuration, README, installers, and tests are never copied.
 
-After setup, `.agents/BOOTSTRAP.md` and any `.coding-agent-bootstrap/` migration state are removed. Only project-relevant presets, project-specific skills, and MCP capabilities remain.
+After setup, `.agents/BOOTSTRAP.md` and any `.coding-agent-bootstrap/` migration state are removed. Only project-relevant presets, project-specific skills, and MCP capabilities remain. Empty directories left by removed templates are pruned so the filesystem does not imply that an unused technology or capability was adopted.
 
 ## Canonical Context
 
@@ -431,7 +431,8 @@ A first-run coding agent should:
 12. Rewrite the canonical scaffold files as concise target-specific context.
 13. Validate documented commands where practical and report anything that could not be run.
 14. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
-15. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
+15. Prune empty directories under `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, then inspect the actual `.agents/` tree rather than relying on Git status.
+16. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
 
 For code-bearing repositories, bootstrap checks for automated behavior verification and relevant static analysis. It does not blindly require unit tests: documentation, configuration, generated-code, and other specialized projects may need build, schema, link, integration, or similar validation instead. Adding dependencies, configuration, tests, or CI remains an explicit maintainer decision, and intentionally absent or blocked checks are recorded rather than silently ignored.
 
