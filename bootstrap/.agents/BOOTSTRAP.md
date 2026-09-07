@@ -60,6 +60,17 @@ This directory is recoverable migration input, not durable project context. Do n
 16. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
 17. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
 
+## README-First Projects
+
+When a README is the repository's only substantive project file and is deliberately written as an implementation specification:
+
+1. Treat the README as maintainer-declared intent unless other repository evidence contradicts it.
+2. Separate the specified target state from the repository's current implemented state. Do not describe planned components as existing or proposed commands as verified.
+3. Extract only durable operational context, such as requirements, constraints, chosen architecture, acceptance criteria, and implementation boundaries. Keep the README as the canonical product specification instead of duplicating it across `.agents/`.
+4. Record only commands that can actually be run in `.agents/COMMANDS.md`. If implementation has not established commands yet, say so explicitly and reconcile the quality baseline as implementation proceeds.
+5. Ask the maintainer only about material ambiguities that block implementation or agent configuration.
+6. Treat completion of this procedure as completion of coding-agent configuration, not completion of the implementation described by the README. Implementation remains normal project work unless it was also requested.
+
 ## GitHub Flow Protection
 
 When the repository adopts GitHub Flow:

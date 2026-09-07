@@ -266,6 +266,8 @@ The preservation directory is temporary migration input, not a second configurat
 
 In an empty or nearly empty Git repository, presets can help the maintainer and agent establish sensible engineering defaults. When application scaffolding is requested, use ecosystem-native generators rather than turning this project into a universal application-template system.
 
+A repository may use an implementation-oriented `README.md` as its only substantive project file. In that case, bootstrap treats the README as maintainer-declared intent, distinguishes the specified target state from what currently exists, and creates only concise operational agent context around it. The README remains the canonical product specification; planned components are not documented as existing, proposed commands are not marked as verified, and completing bootstrap does not imply that the specified application has been implemented.
+
 The installer currently requires an existing Git repository. It does not silently run `git init`.
 
 ## Agent-Managed And Project Docs
