@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  posix:
+    name: POSIX and context
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check shell syntax
+        run: |
+          sh -n install.sh
+          sh -n tests/install.sh
+          sh -n tests/context.sh
+      - name: Check agent context
+        run: sh tests/context.sh
+      - name: Test POSIX installer
+        run: sh tests/install.sh
+
+  windows:
+    name: PowerShell
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Test PowerShell installer
+        shell: pwsh
+        run: pwsh -NoProfile -File tests/install.ps1

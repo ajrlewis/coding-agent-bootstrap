@@ -8,7 +8,9 @@
 - `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; its doctor procedure, preset library, and MCP library are reusable discovery material.
 - `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. Its explicit `--merge` mode preserves direct conflicts under `.coding-agent-bootstrap/existing/`.
 - `install.ps1` provides equivalent local, remote, and `-Merge` Windows behavior; `install.bat` is its local compatibility entrypoint.
-- `tests/install.sh` exercises shell installation and safety behavior without adding a runtime dependency.
+- `tests/install.sh` and `tests/install.ps1` exercise platform-specific installation, refusal, merge-preservation, and rollback behavior.
+- `tests/context.sh` checks deterministic agent-context invariants that do not require semantic repository judgment.
+- `.github/workflows/ci.yml` runs POSIX/context verification on Linux and native PowerShell verification on Windows for pull requests and pushes to `main`.
 
 ## Boundaries
 
@@ -19,6 +21,7 @@
 - Host-specific files must be thin adapters that point back to canonical context.
 - Installers copy repository context only. They must not install global tools, package managers, provider CLIs, credentials, or user-level agent configuration.
 - Shell and PowerShell implementations should preserve equivalent overwrite refusal and Git-repository checks.
+- CI checks host-native behavior directly; containers are optional portability coverage, not a substitute for Windows verification.
 - Only direct overwrite conflicts (`AGENTS.md`, `CLAUDE.md`, and `.agents/`) are preserved by installers. Other agent guidance is discovered during bootstrap.
 
 ## Invariants

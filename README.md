@@ -124,13 +124,20 @@ coding-agent-bootstrap/
 │       ├── presets/
 │       └── mcp/
 ├── tests/
-│   └── install.sh
+│   ├── context.sh
+│   ├── install.sh
+│   └── install.ps1
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── install.sh
 ├── install.ps1
 └── install.bat
 ```
 
 The root keeps only presets, skills, and MCP intent actually adopted by this project. The reusable preset and MCP libraries live in `bootstrap/` because they are discovery material for target repositories.
+
+Repository CI runs the POSIX installer and deterministic context checks on Linux, and the PowerShell installer suite on Windows. It runs for pull requests targeting `main` and again after pushes to `main`; the two job checks are intended to be required by default-branch protection. Containers can be added for distribution-specific portability testing, but they do not replace native Windows coverage.
 
 ## Installed Context
 
