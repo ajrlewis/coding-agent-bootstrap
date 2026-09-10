@@ -53,6 +53,8 @@ Windows merge install:
 ```sh
 sh -n install.sh
 sh -n tests/install.sh
+sh -n tests/context.sh
+sh tests/context.sh
 git diff --check
 ```
 
@@ -61,8 +63,16 @@ git diff --check
 ```sh
 sh -n install.sh
 sh -n tests/install.sh
+sh -n tests/context.sh
+sh tests/context.sh
 sh tests/install.sh
 git diff --check
 ```
 
-PowerShell behavior should also be exercised with `pwsh -File install.ps1` when PowerShell is available. Report explicitly when it is not.
+PowerShell verification:
+
+```powershell
+pwsh -NoProfile -File tests/install.ps1
+```
+
+Run the PowerShell suite when `pwsh` is available. Report explicitly when it is not.
