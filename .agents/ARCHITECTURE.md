@@ -10,7 +10,7 @@
 - `install.ps1` provides equivalent local, remote, and `-Merge` Windows behavior; `install.bat` is its local compatibility entrypoint.
 - `tests/install.sh` and `tests/install.ps1` exercise platform-specific installation, refusal, merge-preservation, and rollback behavior.
 - `tests/context.sh` checks deterministic agent-context invariants that do not require semantic repository judgment.
-- `.github/workflows/ci.yml` runs POSIX/context verification on Linux and native PowerShell verification on Windows for pull requests and pushes to `main`.
+- `.github/workflows/ci.yml` runs POSIX/context verification on Linux and native PowerShell verification on Windows for pull requests targeting `main`.
 
 ## Boundaries
 
