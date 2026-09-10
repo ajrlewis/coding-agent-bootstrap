@@ -2,7 +2,7 @@
 
 This file is temporary. Its presence means coding-agent setup is not complete. Complete this procedure before writing project code.
 
-The routed `.agents/WORKFLOW.md`, `.agents/COMMANDS.md`, `.agents/ARCHITECTURE.md`, and `.agents/TODO.md` files are temporary writing scaffolds. Rewrite them as concise, target-project-specific context; do not leave generic bootstrap prose in place indefinitely. Root `AGENTS.md` and `CLAUDE.md` are canonical entrypoints, not writing scaffolds; preserve them unchanged during bootstrap.
+The routed `.agents/WORKFLOW.md`, `.agents/COMMANDS.md`, `.agents/ARCHITECTURE.md`, and `.agents/todos/TODO.md` files are temporary writing scaffolds. Rewrite them as concise, target-project-specific context; do not leave generic bootstrap prose in place indefinitely. Root `AGENTS.md` and `CLAUDE.md` are canonical entrypoints, not writing scaffolds. Preserve `CLAUDE.md`; preserve `AGENTS.md` until the final cleanup step removes its bootstrap-only routing paragraph.
 
 ## Goal
 
@@ -30,7 +30,7 @@ This directory is recoverable migration input, not durable project context. Do n
    - exact commands into `.agents/COMMANDS.md`;
    - development process into `.agents/WORKFLOW.md`;
    - system boundaries and invariants into `.agents/ARCHITECTURE.md`;
-   - persistent deferred work into `.agents/TODO.md`;
+   - active persistent deferred work into `.agents/todos/TODO.md` and completed follow-up history into `.agents/todos/DONE.md`;
    - adopted stack or workflow conventions into `.agents/presets/`;
    - reusable task procedures into `.agents/skills/`;
    - desired external capabilities into `.agents/mcp/`.
@@ -50,8 +50,8 @@ This directory is recoverable migration input, not durable project context. Do n
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
 5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as project-specific skills, and useful MCP capabilities.
-6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt `.agents/presets/git/github-flow.md` as the default.
-7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection).
+6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt the preset matching the remote host: `.agents/presets/git/github-flow.md` for GitHub or `.agents/presets/git/azure-devops.md` for Azure Repos.
+7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection). When Azure Repos is adopted, complete [Azure Repos Protection](#azure-repos-protection).
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
 9. When hosted secrets, deployment, data, or documentation services are adopted, complete the service-boundary reconciliation in [External Service Boundaries](#external-service-boundaries).
 10. Complete the prerequisite reconciliation in [Tooling And Host Capabilities](#tooling-and-host-capabilities).
@@ -61,7 +61,8 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
-   - `.agents/TODO.md`
+   - `.agents/todos/TODO.md`
+   - `.agents/todos/DONE.md`
    - `.agents/presets/`
    - `.agents/skills/` when the project has reusable task procedures
    - `.agents/mcp/`
@@ -70,7 +71,7 @@ This directory is recoverable migration input, not durable project context. Do n
 16. Inspect the resulting filesystem tree with `find .agents -print` or a platform-equivalent command. Do not rely on Git status, because Git does not report empty directories. Bootstrap is incomplete while an empty template directory remains.
 17. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
 18. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-19. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only after setup and any migration are genuinely complete.
+19. Remove the paragraph beginning `If .agents/BOOTSTRAP.md exists` from root `AGENTS.md`, then remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/`, only after setup and any migration are genuinely complete. Confirm the remaining `AGENTS.md` still routes to every durable canonical file.
 
 Do not create parallel substitutes such as `.agents/WORKFLOWS.md` or `.agents/CHECKLISTS.md` during bootstrap. Add a non-canonical file only when the target project has a distinct, durable need for it, and route to it from the canonical context where appropriate.
 
@@ -94,16 +95,29 @@ When the repository adopts GitHub Flow:
 3. For a shared repository, require pull requests with at least one approving review, enforce the rule for administrators, and block force pushes and branch deletion. These settings must prevent direct pushes to the default branch.
 4. In a solo repository, surface that authors cannot approve their own pull requests and ask the maintainer whether to require an external approval. Still require pull requests and prevent direct and force pushes unless the maintainer explicitly adopts another policy.
 5. Obtain explicit maintainer authorization before creating or changing remote repository settings. Local workflow instructions do not by themselves authorize an external mutation.
-6. Verify the effective settings after any change. If authentication, repository administration permission, or supported GitHub access is unavailable, record the unresolved protection work in `.agents/TODO.md`, report it clearly, and do not claim remote protection was configured.
+6. Verify the effective settings after any change. If authentication, repository administration permission, or supported GitHub access is unavailable, record the unresolved protection work in `.agents/todos/TODO.md`, report it clearly, and do not claim remote protection was configured.
 
 Do not add GitHub CLI or another provider SDK as a project dependency solely for this check. Remote protection belongs to the agent-led bootstrap procedure, not the mechanical file installer.
+
+## Azure Repos Protection
+
+When the repository is hosted in Azure Repos:
+
+1. Identify the Azure DevOps organization, project, repository, and actual remote default branch instead of assuming it is named `main`.
+2. Adopt and tailor `.agents/presets/git/azure-devops.md`. Verify existing Azure CLI and `azure-devops` extension availability before using its commands; do not install or update host tooling without authorization.
+3. Inspect effective branch policies with `az repos policy list` when authenticated Azure DevOps Services access is available. Azure DevOps Server does not support these CLI commands, so use its supported administration interface instead.
+4. For shared repositories, require pull requests, at least one approving reviewer, comment resolution, and successful build validation when relevant pipelines exist. Do not count the author's vote unless project policy explicitly permits it.
+5. Inspect branch security as well as policies. Do not grant ordinary contributors `Bypass policies when pushing` or `Force push`, which also controls branch deletion; restrict all policy-bypass permissions to explicitly authorized administrators while preserving normal pull-request contribution access.
+6. Obtain explicit maintainer authorization before changing remote policies or permissions, then verify the effective result. If authentication, administration permission, or suitable tooling is unavailable, record the unresolved protection work in `.agents/todos/TODO.md`, report it clearly, and do not claim the branch is protected.
+
+Do not add Azure CLI or its extension as a project dependency solely for this check. Remote protection belongs to the agent-led bootstrap procedure, not the mechanical file installer.
 
 ## External Work Tracking
 
 When Linear or another external tracker is the canonical backlog:
 
 1. Inspect existing contributor guidance, integrations, issue identifiers in branch or pull-request history, and available external capabilities before asking how work is tracked.
-2. Keep the external tracker as the single source of truth. Do not copy its backlog or issue bodies into `.agents/TODO.md` or create another durable mirror in the repository.
+2. Keep the external tracker as the single source of truth. Do not copy its backlog or issue bodies into `.agents/todos/TODO.md` or create another durable mirror in the repository.
 3. Keep and tailor the relevant file under `.agents/mcp/`; remove tracker capability files the project does not use. Grant the narrowest workspace, team, project, and write access that supports the adopted workflow.
 4. Document the issue-to-branch-to-pull-request lifecycle in `.agents/WORKFLOW.md`, including actual status transitions and any existing automation.
 5. Use one branch per work item by default and include its stable identifier. Choose the branch prefix from the change type, such as `feature/ENG-123-add-export`, `fix/ENG-124-handle-empty-response`, or `chore/ENG-125-update-dependencies`; do not classify every tracked item as a chore.
@@ -120,7 +134,7 @@ When the project adopts hosted secrets, deployment, data, or documentation servi
 4. Document service relationships and environment boundaries in `.agents/ARCHITECTURE.md`; put exact verified local or CI commands in `.agents/COMMANDS.md`.
 5. Keep and tailor only the relevant files under `.agents/mcp/`. These files describe capability intent and least-privilege scope; they do not contain credentials or silently install host integrations.
 6. Prefer project-scoped, read-only, development access for inspection. Require explicit authorization for secret writes, deployments, production access, database mutations, domain changes, or authenticated documentation edits.
-7. Verify external changes through the provider after making them. If access or permission is unavailable, report the limitation and record genuine unresolved setup work in `.agents/TODO.md`.
+7. Verify external changes through the provider after making them. If access or permission is unavailable, report the limitation and record genuine unresolved setup work in `.agents/todos/TODO.md`.
 
 ## Tooling And Host Capabilities
 
@@ -132,7 +146,7 @@ Reconcile tools only after determining which project workflows and external capa
 4. Prefer repository-pinned development dependencies and existing tool managers over global installations. Preserve the project's package manager and lockfile rather than introducing another one for a CLI.
 5. Document only adopted, verified invocations and version constraints in `.agents/COMMANDS.md`. Keep host-specific MCP configuration as a thin adapter to `.agents/mcp/` capability intent.
 6. Do not install Homebrew, a language runtime, global npm packages, provider CLIs, credentials, or user-level MCP configuration without explicit authorization. Do not treat the presence of a capability template as authorization to connect it.
-7. If a required project command cannot run because a tool or authenticated capability is unavailable, report the exact gap and record genuine unresolved setup work in `.agents/TODO.md`. Do not claim the command or integration was verified.
+7. If a required project command cannot run because a tool or authenticated capability is unavailable, report the exact gap and record genuine unresolved setup work in `.agents/todos/TODO.md`. Do not claim the command or integration was verified.
 
 ## Quality Baseline
 
@@ -144,7 +158,7 @@ Bootstrap must account explicitly for the repository's behavior verification and
 4. If a necessary category is absent, surface it as a material bootstrap decision. Obtain maintainer approval before adding dependencies, configuration, CI workflows, or representative tests.
 5. When approved, establish the minimum ecosystem-native baseline and define fast and full verification in `.agents/COMMANDS.md`, including a focused or single-test command when supported.
 6. Run each documented command before recording it as known-good. Add stable baseline checks to CI and required-check guidance in proportion to repository risk.
-7. If a check is intentionally absent or cannot yet be added, document the rationale and record actionable unresolved work in `.agents/TODO.md`. Do not silently omit it or claim the baseline is complete.
+7. If a check is intentionally absent or cannot yet be added, document the rationale and record actionable unresolved work in `.agents/todos/TODO.md`. Do not silently omit it or claim the baseline is complete.
 
 ## Good Maintainer Questions
 
@@ -164,6 +178,6 @@ Bootstrap must account explicitly for the repository's behavior verification and
 - Keeping every bootstrap preset in the target repository.
 - Leaving empty preset, skill, or MCP directories after removing their template files.
 - Leaving scaffold instructions in canonical files instead of replacing them with project facts.
-- Turning `.agents/TODO.md` into a per-task plan or product backlog.
+- Turning `.agents/todos/TODO.md` into a per-task plan or product backlog, or leaving completed items in it indefinitely.
 - Removing preserved configuration before migration has been reviewed and validated.
 - Leaving temporary bootstrap or migration state in place after setup succeeds.

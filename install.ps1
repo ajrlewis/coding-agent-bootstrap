@@ -200,7 +200,7 @@ try {
     Write-Host "- Read AGENTS.md and complete .agents/BOOTSTRAP.md before normal project work."
     Write-Host "- For README-first repositories, treat README.md as the target-state specification."
     Write-Host "- Do not scaffold or implement the application unless separately requested."
-    Write-Host "- Preserve AGENTS.md and CLAUDE.md unchanged; put project context in the routed .agents files."
+    Write-Host "- Preserve CLAUDE.md; remove only the bootstrap-routing paragraph from AGENTS.md after setup succeeds."
 }
 catch {
     $installError = $_
