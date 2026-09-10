@@ -17,13 +17,15 @@ Define success. Test the result. Do not declare completion without evidence.
 - `.agents/WORKFLOW.md` - the project's development process.
 - `.agents/COMMANDS.md` - canonical verified commands.
 - `.agents/ARCHITECTURE.md` - system boundaries and invariants.
-- `.agents/TODO.md` - persistent agent-managed follow-up work.
+- `.agents/DOCTOR.md` - refresh and consistency checks for agent context; use it when asked to doctor, audit, lint, or refresh the agent files.
+- `.agents/todos/TODO.md` - active agent-managed follow-up work.
+- `.agents/todos/DONE.md` - archive of completed agent-managed follow-up work.
 - `.agents/presets/` - adopted engineering conventions.
 - `.agents/skills/` - recurring specialized procedures, when the project defines them.
 - `.agents/mcp/` - desired external capabilities.
 
-If `.agents/BOOTSTRAP.md` exists, complete it before normal project work. During bootstrap, preserve this file and `CLAUDE.md` unchanged; project-specific context belongs in the routed `.agents/` files.
+If `.agents/BOOTSTRAP.md` exists, complete it before normal project work. During bootstrap, preserve `CLAUDE.md`; project-specific context belongs in the routed `.agents/` files. Remove this paragraph from `AGENTS.md` when bootstrap is complete.
 
 ## Definition Of Done
 
-Run relevant checks from `.agents/COMMANDS.md`, verify the requested outcome, review the diff, update agent-managed context if facts changed, and record discovered out-of-scope work in `.agents/TODO.md`. Never claim a check passed unless it was run.
+Run relevant checks from `.agents/COMMANDS.md`, verify the requested outcome, review the diff, update agent-managed context if facts changed, archive completed follow-up work in `.agents/todos/DONE.md`, and record discovered out-of-scope work in `.agents/todos/TODO.md`. Never claim a check passed unless it was run.

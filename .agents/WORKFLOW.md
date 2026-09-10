@@ -12,6 +12,6 @@ Changes to `coding-agent-bootstrap` should follow this loop:
 8. Test installer changes against temporary Git repositories, including clean, refusal, merge-preservation, remote, and rollback-relevant paths.
 9. Inspect the diff and installed result for accidental root-context leakage.
 10. Update README or agent-managed context if behavior or architecture changed.
-11. Record deferred, agent-relevant follow-up work in `.agents/TODO.md`.
+11. Move completed follow-up entries to `.agents/todos/DONE.md` and record new deferred, agent-relevant work in `.agents/todos/TODO.md`.
 
 Use the GitHub Flow preset for repository changes, including merging the latest `origin/main` before pushing or updating a PR and rerunning relevant verification afterward. Do not add a runtime dependency unless the behavior genuinely requires one.

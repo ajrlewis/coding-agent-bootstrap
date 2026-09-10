@@ -4,9 +4,9 @@
 
 Inspect existing contributor documentation, CI, branch policy, task runners, tests, and recent repository history. Existing repository conventions take precedence over this generic model.
 
-If no project-specific Git policy exists, use `.agents/presets/git/github-flow.md`. It defines when to sync with `origin/main` and requires relevant verification after conflict resolution.
+If no project-specific Git policy exists, adopt the preset matching the repository's Git host: `.agents/presets/git/github-flow.md` for GitHub or `.agents/presets/git/azure-devops.md` for Azure Repos. Both define when to sync with the remote default branch and require relevant verification after conflict resolution.
 
-When Linear or another external tracker is the canonical backlog, keep work-item content there rather than mirroring it into `.agents/TODO.md` or another repository file. Document the target project's state transitions and linking conventions here. A typical tracked workflow is:
+When Linear or another external tracker is the canonical backlog, keep work-item content there rather than mirroring it into `.agents/todos/TODO.md` or another repository file. Document the target project's state transitions and linking conventions here. A typical tracked workflow is:
 
 ```text
 select a work item
@@ -31,11 +31,12 @@ understand task
 -> run relevant verification from .agents/COMMANDS.md
 -> review the diff
 -> update agent-managed context if required
--> record deferred work in .agents/TODO.md
+-> archive completed follow-up work in .agents/todos/DONE.md
+-> record deferred work in .agents/todos/TODO.md
 ```
 
 Do not require every possible check for every task. Define relevant fast and full verification in `.agents/COMMANDS.md` based on the actual project.
 
-During bootstrap, account explicitly for the repository's behavior verification and static checks. A missing test or linting category requires a documented rationale, an approved baseline addition, or an actionable entry in `.agents/TODO.md`; it is not an implicit exemption.
+During bootstrap, account explicitly for the repository's behavior verification and static checks. A missing test or linting category requires a documented rationale, an approved baseline addition, or an actionable entry in `.agents/todos/TODO.md`; it is not an implicit exemption.
 
 Remove this scaffold guidance after documenting the target-specific workflow.

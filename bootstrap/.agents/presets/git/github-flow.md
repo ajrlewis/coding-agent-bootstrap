@@ -63,4 +63,4 @@ Protect the remote default branch with a GitHub ruleset or branch protection pol
 
 Require relevant CI or status checks when they exist, and require branches to be current with the default branch when the CI or merge strategy benefits from it.
 
-In a solo repository, ask the maintainer whether an external approval is practical because authors cannot approve their own pull requests. Verify the effective remote settings when GitHub access is available; if access or administration permission is unavailable, record the unresolved work in `.agents/TODO.md` rather than claiming protection is configured.
+In a solo repository, ask the maintainer whether an external approval is practical because authors cannot approve their own pull requests. Verify the effective remote settings when GitHub access is available; if access or administration permission is unavailable, record the unresolved work in `.agents/todos/TODO.md` rather than claiming protection is configured.

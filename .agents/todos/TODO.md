@@ -1,6 +1,6 @@
 # Agent TODO
 
-Use this file for persistent agent-relevant follow-up work that should survive across sessions.
+Use this file for active, persistent agent-relevant follow-up work that should survive across sessions. Move completed entries to `DONE.md` with their completion date and a concise outcome.
 
 Do not use it as a per-task execution plan or as a replacement for GitHub Issues, Linear, Jira, or the product backlog.
 

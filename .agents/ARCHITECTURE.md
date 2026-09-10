@@ -5,7 +5,7 @@
 ## Components
 
 - Root `AGENTS.md`, `CLAUDE.md`, and `.agents/` configure agents developing this repository.
-- `bootstrap/` is the complete payload copied into target repositories. Its canonical files are temporary writing scaffolds; its preset and MCP directories are the reusable discovery library.
+- `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; its doctor procedure, preset library, and MCP library are reusable discovery material.
 - `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. Its explicit `--merge` mode preserves direct conflicts under `.coding-agent-bootstrap/existing/`.
 - `install.ps1` provides equivalent local, remote, and `-Merge` Windows behavior; `install.bat` is its local compatibility entrypoint.
 - `tests/install.sh` exercises shell installation and safety behavior without adding a runtime dependency.
@@ -25,7 +25,8 @@
 
 - Root and payload `AGENTS.md` files stay short and route to their respective canonical context.
 - Exact project commands live in the relevant `.agents/COMMANDS.md`, not presets or skills.
-- Only the payload contains `.agents/BOOTSTRAP.md`; installed repositories remove it after first-run configuration.
+- Only the payload contains `.agents/BOOTSTRAP.md`; installed repositories remove it and its `AGENTS.md` routing paragraph after first-run configuration.
+- Active and completed agent-managed follow-up work stay separate under `.agents/todos/`.
 - Installed target repositories should keep only adopted presets, project-specific skills, and desired MCP capabilities.
 - Default installation must refuse existing `AGENTS.md`, `CLAUDE.md`, or `.agents/`. Merge mode must preserve them before replacement and retain recoverable state on failure.
 - Installers must refuse a committed default branch unless the user supplies the explicit current-branch override; unborn repositories remain installable.

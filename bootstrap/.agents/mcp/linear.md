@@ -14,7 +14,7 @@ Optional by default. Required when Linear is the project's canonical work tracke
 
 ## Source Of Truth
 
-Keep work items in Linear. Do not mirror the Linear backlog or issue descriptions into an agent file. `.agents/TODO.md` remains reserved for durable agent-relevant follow-up work that does not belong in the product backlog.
+Keep work items in Linear. Do not mirror the Linear backlog or issue descriptions into an agent file. `.agents/todos/TODO.md` remains reserved for durable agent-relevant follow-up work that does not belong in the product backlog.
 
 ## Expected Scope
 

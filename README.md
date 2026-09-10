@@ -28,7 +28,7 @@ On Windows PowerShell, install after the same branch check:
 irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1 | iex
 ```
 
-Then start a coding-agent session in the target repository. The agent will see `AGENTS.md` and `.agents/BOOTSTRAP.md`, inspect the project, replace the routed `.agents/` scaffolds with project-specific context, and remove `BOOTSTRAP.md` when setup is complete. `AGENTS.md` and `CLAUDE.md` are canonical entrypoints and remain unchanged.
+Then start a coding-agent session in the target repository. The agent will see `AGENTS.md` and `.agents/BOOTSTRAP.md`, inspect the project, replace the routed `.agents/` scaffolds with project-specific context, remove the bootstrap-only paragraph from `AGENTS.md`, and remove `BOOTSTRAP.md` when setup is complete. `AGENTS.md` and `CLAUDE.md` remain canonical entrypoints; only the temporary bootstrap route is removed from `AGENTS.md`.
 
 For a README-first repository, use this prompt instead of the ambiguous phrase "bootstrap from the README":
 
@@ -101,7 +101,10 @@ coding-agent-bootstrap/
 │   ├── WORKFLOW.md
 │   ├── COMMANDS.md
 │   ├── ARCHITECTURE.md
-│   ├── TODO.md
+│   ├── DOCTOR.md
+│   ├── todos/
+│   │   ├── TODO.md
+│   │   └── DONE.md
 │   ├── presets/
 │   ├── skills/
 │   └── mcp/
@@ -114,7 +117,10 @@ coding-agent-bootstrap/
 │       ├── WORKFLOW.md
 │       ├── COMMANDS.md
 │       ├── ARCHITECTURE.md
-│       ├── TODO.md
+│       ├── DOCTOR.md
+│       ├── todos/
+│       │   ├── TODO.md
+│       │   └── DONE.md
 │       ├── presets/
 │       └── mcp/
 ├── tests/
@@ -140,21 +146,28 @@ target-project/
     ├── WORKFLOW.md
     ├── COMMANDS.md
     ├── ARCHITECTURE.md
-    ├── TODO.md
+    ├── DOCTOR.md
+    ├── todos/
+    │   ├── TODO.md
+    │   └── DONE.md
     ├── presets/
     └── mcp/
 ```
 
 The root development configuration, README, installers, and tests are never copied.
 
-After setup, `.agents/BOOTSTRAP.md` and any `.coding-agent-bootstrap/` migration state are removed. Only project-relevant presets, project-specific skills, and MCP capabilities remain. Empty directories left by removed templates are pruned so the filesystem does not imply that an unused technology or capability was adopted.
+After setup, the bootstrap-only route in `AGENTS.md`, `.agents/BOOTSTRAP.md`, and any `.coding-agent-bootstrap/` migration state are removed. Only durable canonical context, project-relevant presets, project-specific skills, and MCP capabilities remain. Empty directories left by removed templates are pruned so the filesystem does not imply that an unused technology or capability was adopted.
 
 ## Canonical Context
 
 - `.agents/WORKFLOW.md` describes how development work normally proceeds.
 - `.agents/COMMANDS.md` records exact, verified commands, including relevant fast or full verification where useful.
 - `.agents/ARCHITECTURE.md` captures the boundaries and relationships needed to make safe changes.
-- `.agents/TODO.md` stores persistent agent-relevant deferred work, not the current task plan or product backlog.
+- `.agents/DOCTOR.md` defines how to audit and refresh agent context against the repository.
+- `.agents/todos/TODO.md` stores active agent-relevant deferred work, not the current task plan or product backlog.
+- `.agents/todos/DONE.md` archives completed follow-up work so the active list stays concise.
+
+When asked to doctor, audit, lint, validate, or refresh the agent files, an agent follows `DOCTOR.md`: it checks routed paths, compares context with repository sources of truth, verifies documented commands where safe, removes stale claims, and reports unresolved inconsistencies. This is agent-context maintenance; ordinary source-code linting still uses the project commands in `COMMANDS.md`.
 
 During first-run setup these payload files are writing scaffolds. The agent must replace their guidance with concise target-project facts rather than leave generic boilerplate indefinitely.
 
@@ -165,7 +178,9 @@ AGENTS.md       universal behavior and routing
 WORKFLOW.md     project development process
 COMMANDS.md     exact verified commands
 ARCHITECTURE.md project architecture and boundaries
-TODO.md         persistent unresolved agent work
+DOCTOR.md       agent-context audit and refresh procedure
+todos/TODO.md   active unresolved agent work
+todos/DONE.md   completed agent-work archive
 presets/        adopted engineering conventions
 skills/         reusable task procedures
 mcp/            desired external capabilities
@@ -173,13 +188,13 @@ mcp/            desired external capabilities
 
 ## Presets
 
-Presets capture adopted engineering opinions. The payload includes concise starting guidance for GitHub Flow, Next.js, Bun, Python, uv, FastAPI, PostgreSQL, Supabase, Alembic, Prisma, Docker, GitHub Actions, and pre-commit.
+Presets capture adopted engineering opinions. The payload includes concise starting guidance for GitHub Flow, Azure DevOps, Next.js, Bun, Python, uv, FastAPI, PostgreSQL, Supabase, Alembic, Prisma, Docker, GitHub Actions, and pre-commit.
 
 The name `presets` is intentional. A template suggests copying content blindly. A preset is a starting opinion that must be reconciled with the actual repository.
 
 Existing project conventions take precedence over generic presets. The first agent removes presets that are not relevant and tailors those the target adopts.
 
-The default Git preset uses focused branches, merges the latest `origin/main` into the branch before pushing or updating a PR, and reruns relevant verification after conflict resolution. When GitHub Flow is adopted, the agent-led bootstrap also verifies protection of the remote default branch. Shared repositories require pull requests, at least one approval, administrator enforcement, and blocked force pushes and deletion. Remote settings are changed only with explicit maintainer authorization; unavailable access is recorded as unresolved follow-up work.
+The first agent selects the Git preset matching the repository host. Both GitHub and Azure DevOps presets use focused branches, sync the remote default branch before opening or updating a pull request, and rerun relevant verification after conflict resolution. They also require inspection of remote default-branch protection. Azure Repos guidance covers `az repos` pull-request and policy commands plus the branch permissions that prevent direct and force pushes. Remote settings are changed only with explicit maintainer authorization; unavailable access is recorded as unresolved follow-up work.
 
 ## Skills
 
@@ -198,7 +213,7 @@ Skills describe recurring specialized procedures:
 
 `.agents/mcp/` expresses desired external capability intent, such as Doppler, GitHub, Linear, Mintlify, PostgreSQL, Supabase, or Vercel access. Each definition describes purpose, requirement level, expected scope, configuration, and security concerns.
 
-When Linear is the canonical work tracker, its issues remain the source of truth rather than being copied into agent files. The adopted workflow can fetch the current item through MCP, move it through real project states, create a typed branch containing the issue identifier, link the pull request, and complete the item after the corresponding work is complete. `.agents/TODO.md` remains for agent-relevant follow-up work, not a mirrored backlog.
+When Linear is the canonical work tracker, its issues remain the source of truth rather than being copied into agent files. The adopted workflow can fetch the current item through MCP, move it through real project states, create a typed branch containing the issue identifier, link the pull request, and complete the item after the corresponding work is complete. `.agents/todos/TODO.md` remains for agent-relevant follow-up work, not a mirrored backlog.
 
 External service files follow the same rule: they express access intent rather than duplicate provider state. When adopted, Doppler remains the canonical secret source and may sync values to Vercel or Supabase; repository-owned deployment configuration, migrations, functions, and docs remain versioned locally; Mintlify represents published documentation state. The bootstrap procedure records these relationships in `.agents/ARCHITECTURE.md` and removes capability files the target does not use.
 
@@ -262,13 +277,16 @@ CLAUDE.md
 ├── WORKFLOW.md
 ├── COMMANDS.md
 ├── ARCHITECTURE.md
-├── TODO.md
+├── DOCTOR.md
+├── todos/
+│   ├── TODO.md
+│   └── DONE.md
 ├── presets/
 ├── skills/
 └── mcp/
 ```
 
-`.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` are then gone. The agent must retain meaningful existing rules, deduplicate compatible guidance, and surface conflicting policies to the maintainer rather than silently choosing one.
+The bootstrap-only route in `AGENTS.md`, `.agents/BOOTSTRAP.md`, and `.coding-agent-bootstrap/` are then gone. The agent must retain meaningful existing rules, deduplicate compatible guidance, and surface conflicting policies to the maintainer rather than silently choosing one.
 
 The preservation directory is temporary migration input, not a second configuration hierarchy. Do not commit it as the final agent configuration.
 
@@ -422,7 +440,7 @@ A first-run coding agent should:
 3. Read `.coding-agent-bootstrap/existing/` when merge state is present and inspect other existing agent guidance.
 4. Discover the stack, commands, architecture, workflow, conventions, useful skills, and desired external capabilities.
 5. Reconcile compatible existing intent, deduplicate it, and surface meaningful policy conflicts.
-6. When GitHub Flow is adopted, detect the remote default branch and verify its protection, changing remote settings only with explicit maintainer authorization.
+6. Select the GitHub or Azure DevOps preset that matches the remote host, detect the remote default branch, and verify its protection, changing remote settings only with explicit maintainer authorization.
 7. When an external tracker is adopted, keep it canonical and document its work-item-to-branch-to-pull-request lifecycle without mirroring the backlog.
 8. For adopted hosted services, document canonical state, sync direction, environment boundaries, and authorization requirements without duplicating credentials or provider state.
 9. Verify only the command-line tools and host capabilities required by adopted workflows; do not install global tools or connect external accounts implicitly.
@@ -432,7 +450,7 @@ A first-run coding agent should:
 13. Validate documented commands where practical and report anything that could not be run.
 14. Remove duplicated guidance and unselected presets, skills, or MCP definitions.
 15. Prune empty directories under `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, then inspect the actual `.agents/` tree rather than relying on Git status.
-16. Remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/` only when setup and migration are genuinely complete.
+16. Remove the bootstrap-only paragraph from `AGENTS.md`, then remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/`, only when setup and migration are genuinely complete.
 
 For code-bearing repositories, bootstrap checks for automated behavior verification and relevant static analysis. It does not blindly require unit tests: documentation, configuration, generated-code, and other specialized projects may need build, schema, link, integration, or similar validation instead. Adding dependencies, configuration, tests, or CI remains an explicit maintainer decision, and intentionally absent or blocked checks are recorded rather than silently ignored.
 
@@ -449,7 +467,7 @@ The two version files have separate scopes:
 - Root `.agents/VERSION` identifies the schema used by this repository's own agent context.
 - `bootstrap/.agents/VERSION` identifies the installable payload schema and becomes the target's `.agents/VERSION`.
 
-Payload version `3` adds explicit preservation state and semantic migration instructions for existing coding-agent configuration. Versioning remains intentionally simple; there is no migration framework.
+Payload version `4` adds the agent-context doctor, active/completed TODO split, Azure DevOps preset, and post-bootstrap routing cleanup. Versioning remains intentionally simple; there is no migration framework.
 
 ## What This Is Not
 
