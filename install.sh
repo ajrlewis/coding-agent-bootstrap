@@ -4,16 +4,13 @@ set -eu
 REPOSITORY_URL=${CAB_INSTALL_REPOSITORY:-https://github.com/ajrlewis/coding-agent-bootstrap.git}
 REPOSITORY_REF=${CAB_INSTALL_REF:-main}
 INSTALL_BRANCH=chore/coding-agent-bootstrap
-AGENT_PROMPT='Complete .agents/BOOTSTRAP.md for this repository before normal project work. Do not scaffold or implement the application unless separately requested.'
 
 usage() {
-  echo "Usage: install.sh [--merge] [--allow-current-branch] [codex|claude] [target-repository]"
+  echo "Usage: install.sh [--merge] [--allow-current-branch] [target-repository]"
   echo
   echo "Options:"
   echo "  --merge                 Preserve existing configuration (the default; retained for compatibility)."
   echo "  --allow-current-branch  Skip automatic branch creation on the repository's default branch."
-  echo "  codex, --codex          Start Codex with the bootstrap prompt after installation."
-  echo "  claude, --claude        Start Claude Code with the bootstrap prompt after installation."
   echo "  -h, --help              Show this help."
 }
 
@@ -38,7 +35,6 @@ remove_path() {
 }
 
 ALLOW_CURRENT_BRANCH=0
-START_AGENT=
 TARGET_ARGUMENT=
 
 while [ "$#" -gt 0 ]; do
@@ -48,20 +44,6 @@ while [ "$#" -gt 0 ]; do
       ;;
     --allow-current-branch)
       ALLOW_CURRENT_BRANCH=1
-      ;;
-    codex|--codex)
-      if [ -n "$START_AGENT" ]; then
-        echo "error: expected at most one agent to start" >&2
-        exit 1
-      fi
-      START_AGENT=codex
-      ;;
-    claude|--claude)
-      if [ -n "$START_AGENT" ]; then
-        echo "error: expected at most one agent to start" >&2
-        exit 1
-      fi
-      START_AGENT=claude
       ;;
     -h|--help)
       usage
@@ -107,7 +89,6 @@ INSTALLED_AGENTS_DIR=0
 EXISTING_AGENTS_MD=0
 EXISTING_CLAUDE_MD=0
 EXISTING_AGENTS_DIR=0
-INSTALL_COMPLETE=0
 
 restore_existing_configuration() {
   restore_failed=0
@@ -142,7 +123,7 @@ cleanup() {
   status=$?
   trap - EXIT HUP INT TERM
 
-  if [ "$status" -ne 0 ] && [ "$INSTALL_COMPLETE" -eq 0 ]; then
+  if [ "$status" -ne 0 ]; then
     [ "$INSTALLED_AGENTS_MD" -eq 0 ] || remove_path "$TARGET_DIR/AGENTS.md" || :
     [ "$INSTALLED_CLAUDE_MD" -eq 0 ] || remove_path "$TARGET_DIR/CLAUDE.md" || :
     [ "$INSTALLED_AGENTS_DIR" -eq 0 ] || remove_path "$TARGET_DIR/.agents" || :
@@ -167,11 +148,6 @@ MIGRATION_DIR=$TARGET_DIR/.coding-agent-bootstrap
 
 if ! command -v git >/dev/null 2>&1; then
   echo "error: Git is required to inspect the target repository" >&2
-  exit 1
-fi
-
-if [ -n "$START_AGENT" ] && ! command -v "$START_AGENT" >/dev/null 2>&1; then
-  echo "error: requested agent is not installed or not on PATH: $START_AGENT" >&2
   exit 1
 fi
 
@@ -290,7 +266,6 @@ mv "$STAGE_DIR/payload/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"
 INSTALLED_CLAUDE_MD=1
 mv "$STAGE_DIR/payload/.agents" "$TARGET_DIR/.agents"
 INSTALLED_AGENTS_DIR=1
-INSTALL_COMPLETE=1
 
 echo "Installed coding-agent-bootstrap into:"
 echo "  $TARGET_DIR"
@@ -307,26 +282,3 @@ echo "- Read AGENTS.md and complete .agents/BOOTSTRAP.md before normal project w
 echo "- For README-first repositories, treat README.md as the target-state specification."
 echo "- Do not scaffold or implement the application unless separately requested."
 echo "- Preserve CLAUDE.md; remove only the bootstrap-routing paragraph from AGENTS.md after setup succeeds."
-
-if [ -n "$START_AGENT" ]; then
-  [ -z "$STAGE_DIR" ] || [ ! -d "$STAGE_DIR" ] || rm -rf "$STAGE_DIR"
-  STAGE_DIR=
-  [ -z "$DOWNLOAD_DIR" ] || [ ! -d "$DOWNLOAD_DIR" ] || rm -rf "$DOWNLOAD_DIR"
-  DOWNLOAD_DIR=
-
-  echo
-  echo "Starting $START_AGENT in:"
-  echo "  $TARGET_DIR"
-
-  if ( : </dev/tty ) 2>/dev/null; then
-    case "$START_AGENT" in
-      codex) codex -C "$TARGET_DIR" "$AGENT_PROMPT" </dev/tty ;;
-      claude) (cd "$TARGET_DIR" && claude "$AGENT_PROMPT" </dev/tty) ;;
-    esac
-  else
-    case "$START_AGENT" in
-      codex) codex -C "$TARGET_DIR" "$AGENT_PROMPT" ;;
-      claude) (cd "$TARGET_DIR" && claude "$AGENT_PROMPT") ;;
-    esac
-  fi
-fi

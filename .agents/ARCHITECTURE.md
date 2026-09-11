@@ -6,8 +6,8 @@
 
 - Root `AGENTS.md`, `CLAUDE.md`, and `.agents/` configure agents developing this repository.
 - `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; its doctor procedure, preset library, and MCP library are reusable discovery material.
-- `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. It preserves direct conflicts under `.coding-agent-bootstrap/existing/` by default; `--merge` remains a compatibility option. The optional `codex` or `claude` action starts that CLI with the bootstrap prompt after a successful install.
-- `install.ps1` provides equivalent local and remote Windows behavior, including optional `-Agent codex` or `-Agent claude` startup, with `-Merge` retained for compatibility; `install.bat` is its local compatibility entrypoint.
+- `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. It preserves direct conflicts under `.coding-agent-bootstrap/existing/` by default; `--merge` remains a compatibility option.
+- `install.ps1` provides equivalent local and remote Windows behavior, with `-Merge` retained for compatibility; `install.bat` is its local compatibility entrypoint.
 - `tests/install.sh` and `tests/install.ps1` exercise platform-specific installation, Git initialization, branch creation, default merge-preservation, refusal, and rollback behavior.
 - `tests/context.sh` checks deterministic agent-context invariants that do not require semantic repository judgment.
 - `.github/workflows/ci.yml` runs POSIX/context verification on Linux and native PowerShell verification on Windows for pull requests targeting `main`.
