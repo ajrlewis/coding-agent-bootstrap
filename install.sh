@@ -8,7 +8,7 @@ usage() {
   echo "Usage: install.sh [--merge] [--allow-current-branch] [target-repository]"
   echo
   echo "Options:"
-  echo "  --merge                 Preserve existing coding-agent configuration for semantic migration."
+  echo "  --merge                 Preserve existing configuration (the default; retained for compatibility)."
   echo "  --allow-current-branch  Allow installation on the repository's default branch."
   echo "  -h, --help              Show this help."
 }
@@ -33,14 +33,13 @@ remove_path() {
   fi
 }
 
-MERGE_MODE=0
 ALLOW_CURRENT_BRANCH=0
 TARGET_ARGUMENT=
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --merge)
-      MERGE_MODE=1
+      # Existing configuration is always preserved. Retain this option for compatibility.
       ;;
     --allow-current-branch)
       ALLOW_CURRENT_BRANCH=1
@@ -203,17 +202,6 @@ path_exists "$TARGET_DIR/.agents" && EXISTING_AGENTS_DIR=1
 HAS_EXISTING=0
 if [ "$EXISTING_AGENTS_MD" -eq 1 ] || [ "$EXISTING_CLAUDE_MD" -eq 1 ] || [ "$EXISTING_AGENTS_DIR" -eq 1 ]; then
   HAS_EXISTING=1
-fi
-
-if [ "$HAS_EXISTING" -eq 1 ] && [ "$MERGE_MODE" -eq 0 ]; then
-  echo "Existing coding-agent configuration detected:" >&2
-  [ "$EXISTING_AGENTS_MD" -eq 0 ] || echo "  AGENTS.md" >&2
-  [ "$EXISTING_CLAUDE_MD" -eq 0 ] || echo "  CLAUDE.md" >&2
-  [ "$EXISTING_AGENTS_DIR" -eq 0 ] || echo "  .agents/" >&2
-  echo >&2
-  echo "Refusing to overwrite existing configuration." >&2
-  echo "Re-run with --merge to preserve and migrate the existing configuration." >&2
-  exit 1
 fi
 
 if path_exists "$MIGRATION_DIR"; then

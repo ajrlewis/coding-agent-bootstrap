@@ -40,7 +40,7 @@ complete .agents/BOOTSTRAP.md, and do not scaffold or implement the application.
 
 When installation is delegated to an agent, require it to perform a discovery gate before writing any files: check for `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/`, locate the canonical coding-agent-bootstrap installer or templates, and determine whether "bootstrap" means agent configuration or application scaffolding. If the intended operation or canonical source cannot be resolved, the agent should ask rather than improvise agent files or write project code.
 
-The default command refuses existing `AGENTS.md`, `CLAUDE.md`, or `.agents/`. For a mature repository, use the explicit [merge workflow](#existing-agent-configuration).
+The default command preserves existing `AGENTS.md`, `CLAUDE.md`, or `.agents/` for the [merge workflow](#existing-agent-configuration).
 
 Piping remote code into a shell is convenient but less inspectable. The [transparent clone-based installation](#installation) is the preferred alternative when reviewing the installer first matters.
 
@@ -234,19 +234,13 @@ It preserves intentional project decisions. Presets fill genuine gaps or clarify
 
 ## Existing Agent Configuration
 
-Default installation remains conservative. If `AGENTS.md`, `CLAUDE.md`, or `.agents/` already exists, the installer lists the conflicting paths and stops without changing them:
+If `AGENTS.md`, `CLAUDE.md`, or `.agents/` already exists, the default installer preserves it for semantic migration before installing the canonical bootstrap payload:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh
 ```
 
-Use explicit merge mode when existing coding-agent configuration should be migrated:
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --merge
-```
-
-`--merge` does not text-merge Markdown. It:
+This does not text-merge Markdown. It:
 
 1. Copies existing direct conflicts verbatim into `.coding-agent-bootstrap/existing/`.
 2. Installs the normal bootstrap payload.
@@ -262,7 +256,7 @@ Existing:
 AGENTS.md
 CLAUDE.md
 
-After install --merge:
+After install:
 AGENTS.md
 CLAUDE.md
 .agents/
@@ -346,7 +340,7 @@ Prefer a repository-pinned dependency such as Supabase's project package when su
 
 ## Installation
 
-All installation modes require a Git repository. In repositories with commits, installers refuse to modify the default branch; create a focused branch first, or use the explicit `--allow-current-branch` (`-AllowCurrentBranch` in PowerShell) override when installation there is intentional. Unborn repositories are allowed. By default installers also refuse existing direct conflicts; explicit merge mode preserves those paths before replacement. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
+All installation modes require a Git repository. In repositories with commits, installers refuse to modify the default branch; create a focused branch first, or use the explicit `--allow-current-branch` (`-AllowCurrentBranch` in PowerShell) override when installation there is intentional. Unborn repositories are allowed. Existing direct conflicts are preserved before replacement by default. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
 
 ### Shell: Remote
 
@@ -357,12 +351,6 @@ curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/mai
 ```
 
 The streamed script shallow-clones the bootstrap repository into a temporary directory, copies only `bootstrap/`, and removes the temporary checkout.
-
-For merge mode:
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --merge
-```
 
 To intentionally install on the current default branch:
 
@@ -386,7 +374,7 @@ A local checkout can also target a repository explicitly:
 ./install.sh /path/to/target/repository
 ```
 
-Add `--merge` to preserve existing direct conflicts:
+Existing direct conflicts are preserved automatically. `--merge` remains accepted for compatibility:
 
 ```sh
 ./install.sh --merge /path/to/target/repository
@@ -402,9 +390,9 @@ Run from the target repository root:
 irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1 | iex
 ```
 
-The PowerShell installer uses the same temporary shallow-clone and overwrite-refusal model as the shell installer.
+The PowerShell installer uses the same temporary shallow-clone and default preservation model as the shell installer.
 
-For remote merge mode, invoke the downloaded script block with `-Merge`:
+The `-Merge` switch remains accepted for compatibility:
 
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1))) -Merge
@@ -428,7 +416,7 @@ Remove-Item -Recurse -Force $bootstrapDir
 install.bat C:\path\to\target\repository
 ```
 
-Local Windows merge forms are:
+The equivalent compatibility forms for local Windows installation are:
 
 ```powershell
 .\install.ps1 -Merge C:\path\to\target\repository
