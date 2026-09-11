@@ -59,7 +59,7 @@ assert_no_staging_files() {
 
 echo "Testing local installation..."
 "$ROOT_DIR/install.sh" --help >"$TEST_ROOT/help-output"
-grep -F "install.sh [--merge] [--allow-current-branch] [codex|claude] [target-repository]" "$TEST_ROOT/help-output" >/dev/null || fail "help omits installer options"
+grep -F "install.sh [--merge] [--allow-current-branch] [target-repository]" "$TEST_ROOT/help-output" >/dev/null || fail "help omits installer options"
 grep -F "the default; retained for compatibility" "$TEST_ROOT/help-output" >/dev/null || fail "help does not describe default merge behavior"
 make_git_repo local-target
 printf '%s\n' "# Product specification" "" "Build the application described here." >"$TEST_REPO/README.md"
@@ -104,47 +104,6 @@ grep -F "Canonical files installed." "$TEST_ROOT/install-output" >/dev/null || f
 grep -F "For README-first repositories, treat README.md as the target-state specification." "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits README-first guidance"
 grep -F "Do not scaffold or implement the application unless separately requested." "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits the implementation boundary"
 grep -F "remove only the bootstrap-routing paragraph from AGENTS.md after setup succeeds" "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits bootstrap routing cleanup"
-
-echo "Testing post-install agent startup..."
-AGENT_BIN=$TEST_ROOT/agent-bin
-mkdir "$AGENT_BIN"
-printf '%s\n' \
-  '#!/bin/sh' \
-  'printf '\''%s\n'\'' "$PWD" >"$CAB_TEST_AGENT_CWD"' \
-  'printf '\''%s\n'\'' "$@" >"$CAB_TEST_AGENT_ARGS"' >"$AGENT_BIN/codex"
-cp "$AGENT_BIN/codex" "$AGENT_BIN/claude"
-chmod +x "$AGENT_BIN/codex" "$AGENT_BIN/claude"
-
-make_git_repo codex-start
-EXPECTED_AGENT_TARGET=$(CDPATH= cd -- "$TEST_REPO" && pwd)
-CODEX_CWD=$TEST_ROOT/codex-cwd
-CODEX_ARGS=$TEST_ROOT/codex-args
-PATH="$AGENT_BIN:$PATH" CAB_TEST_AGENT_CWD="$CODEX_CWD" CAB_TEST_AGENT_ARGS="$CODEX_ARGS" \
-  "$ROOT_DIR/install.sh" codex "$TEST_REPO" >/dev/null
-[ "$(sed -n '1p' "$CODEX_ARGS")" = "-C" ] || fail "Codex startup omitted the target-directory option"
-[ "$(sed -n '2p' "$CODEX_ARGS")" = "$EXPECTED_AGENT_TARGET" ] || fail "Codex startup used the wrong target directory"
-grep -F "Complete .agents/BOOTSTRAP.md" "$CODEX_ARGS" >/dev/null || fail "Codex startup omitted the bootstrap prompt"
-assert_no_staging_files "$TEST_REPO"
-
-make_git_repo claude-start
-EXPECTED_AGENT_TARGET=$(CDPATH= cd -- "$TEST_REPO" && pwd)
-CLAUDE_CWD=$TEST_ROOT/claude-cwd
-CLAUDE_ARGS=$TEST_ROOT/claude-args
-PATH="$AGENT_BIN:$PATH" CAB_TEST_AGENT_CWD="$CLAUDE_CWD" CAB_TEST_AGENT_ARGS="$CLAUDE_ARGS" \
-  "$ROOT_DIR/install.sh" claude "$TEST_REPO" >/dev/null
-[ "$(sed -n '1p' "$CLAUDE_CWD")" = "$EXPECTED_AGENT_TARGET" ] || fail "Claude startup used the wrong working directory"
-grep -F "Complete .agents/BOOTSTRAP.md" "$CLAUDE_ARGS" >/dev/null || fail "Claude startup omitted the bootstrap prompt"
-assert_no_staging_files "$TEST_REPO"
-
-make_git_repo failed-agent-start
-printf '%s\n' '#!/bin/sh' 'exit 42' >"$AGENT_BIN/codex"
-chmod +x "$AGENT_BIN/codex"
-if PATH="$AGENT_BIN:$PATH" "$ROOT_DIR/install.sh" codex "$TEST_REPO" >/dev/null 2>&1; then
-  fail "failed Codex startup unexpectedly succeeded"
-fi
-[ -f "$TEST_REPO/AGENTS.md" ] || fail "failed Codex startup rolled back a successful installation"
-[ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "failed Codex startup removed bootstrap state"
-assert_no_staging_files "$TEST_REPO"
 
 echo "Testing automatic install-branch creation..."
 make_committed_git_repo default-branch
