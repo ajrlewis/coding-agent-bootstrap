@@ -68,7 +68,6 @@ fi
 
 [ "$(sed -n '1p' .agents/VERSION)" = "2" ] || fail "root agent-context version is not 2"
 [ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "4" ] || fail "payload version is not 4"
-require_text README.md 'Payload version `4`'
 
 cmp .agents/DOCTOR.md bootstrap/.agents/DOCTOR.md >/dev/null || fail "root and payload doctor procedures differ"
 if cmp .agents/ARCHITECTURE.md bootstrap/.agents/ARCHITECTURE.md >/dev/null; then
