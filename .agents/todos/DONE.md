@@ -8,4 +8,4 @@ Archive completed entries from `TODO.md` here with their completion date and a c
 
 ## Completed Items
 
-None.
+- 2026-09-11 — Installers now initialize Git automatically when the target is not already a repository.
