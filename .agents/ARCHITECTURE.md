@@ -6,9 +6,9 @@
 
 - Root `AGENTS.md`, `CLAUDE.md`, and `.agents/` configure agents developing this repository.
 - `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; its doctor procedure, preset library, and MCP library are reusable discovery material.
-- `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. Its explicit `--merge` mode preserves direct conflicts under `.coding-agent-bootstrap/existing/`.
-- `install.ps1` provides equivalent local, remote, and `-Merge` Windows behavior; `install.bat` is its local compatibility entrypoint.
-- `tests/install.sh` and `tests/install.ps1` exercise platform-specific installation, refusal, merge-preservation, and rollback behavior.
+- `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. It preserves direct conflicts under `.coding-agent-bootstrap/existing/` by default; `--merge` remains a compatibility option.
+- `install.ps1` provides equivalent local and remote Windows behavior, with `-Merge` retained for compatibility; `install.bat` is its local compatibility entrypoint.
+- `tests/install.sh` and `tests/install.ps1` exercise platform-specific installation, default merge-preservation, refusal, and rollback behavior.
 - `tests/context.sh` checks deterministic agent-context invariants that do not require semantic repository judgment.
 - `.github/workflows/ci.yml` runs POSIX/context verification on Linux and native PowerShell verification on Windows for pull requests targeting `main`.
 
@@ -16,11 +16,11 @@
 
 - Root agent context must never be installed into target repositories.
 - Installers copy only `bootstrap/AGENTS.md`, `bootstrap/CLAUDE.md`, and `bootstrap/.agents/`.
-- Installers validate and transfer files. In merge mode they preserve bytes but do not interpret content; semantic reconciliation belongs to the coding agent.
+- Installers validate and transfer files. They preserve conflicting configuration bytes but do not interpret content; semantic reconciliation belongs to the coding agent.
 - No runtime service, daemon, orchestration layer, or application generator belongs here.
 - Host-specific files must be thin adapters that point back to canonical context.
 - Installers copy repository context only. They must not install global tools, package managers, provider CLIs, credentials, or user-level agent configuration.
-- Shell and PowerShell implementations should preserve equivalent overwrite refusal and Git-repository checks.
+- Shell and PowerShell implementations should preserve equivalent conflict-preservation and Git-repository checks.
 - CI checks host-native behavior directly; containers are optional portability coverage, not a substitute for Windows verification.
 - Only direct overwrite conflicts (`AGENTS.md`, `CLAUDE.md`, and `.agents/`) are preserved by installers. Other agent guidance is discovered during bootstrap.
 
@@ -31,7 +31,7 @@
 - Only the payload contains `.agents/BOOTSTRAP.md`; installed repositories remove it and its `AGENTS.md` routing paragraph after first-run configuration.
 - Active and completed agent-managed follow-up work stay separate under `.agents/todos/`.
 - Installed target repositories should keep only adopted presets, project-specific skills, and desired MCP capabilities.
-- Default installation must refuse existing `AGENTS.md`, `CLAUDE.md`, or `.agents/`. Merge mode must preserve them before replacement and retain recoverable state on failure.
+- Default installation must preserve existing `AGENTS.md`, `CLAUDE.md`, or `.agents/` before replacement and retain recoverable state on failure.
 - Installers must refuse a committed default branch unless the user supplies the explicit current-branch override; unborn repositories remain installable.
 - Installer runtime requirements stay limited to Git and the host script environment; tools needed only by an adopted target-project workflow are discovered after installation.
 - `.coding-agent-bootstrap/` is temporary merge state and must remain until semantic migration is validated.

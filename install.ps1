@@ -122,15 +122,6 @@ try {
     $existingAgentsDir = Test-Path -LiteralPath (Join-Path $targetDir ".agents")
     $hasExisting = $existingAgentsMd -or $existingClaudeMd -or $existingAgentsDir
 
-    if ($hasExisting -and -not $Merge) {
-        Write-Host "Existing coding-agent configuration detected:" -ForegroundColor Yellow
-        if ($existingAgentsMd) { Write-Host "  AGENTS.md" }
-        if ($existingClaudeMd) { Write-Host "  CLAUDE.md" }
-        if ($existingAgentsDir) { Write-Host "  .agents/" }
-        Write-Host ""
-        throw "Refusing to overwrite existing configuration. Re-run with -Merge to preserve and migrate it."
-    }
-
     if (Test-Path -LiteralPath $migrationDir) {
         throw "temporary migration state already exists: $migrationDir. Complete or remove it before running the installer again."
     }

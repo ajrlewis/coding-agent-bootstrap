@@ -125,13 +125,17 @@ try {
         Fail-Test "default-branch refusal installed AGENTS.md"
     }
 
-    Write-Host "Testing PowerShell overwrite refusal..."
-    $repository = New-TestRepository "overwrite-refusal"
+    Write-Host "Testing PowerShell default preservation..."
+    $repository = New-TestRepository "default-preservation"
     Set-Content -LiteralPath (Join-Path $repository "AGENTS.md") -Value "existing"
     $result = Invoke-InstallerProcess @($repository)
-    Assert-FailedWith $result "Re-run with -Merge" "overwrite refusal"
-    if ((Get-Content -LiteralPath (Join-Path $repository "AGENTS.md") -Raw).Trim() -ne "existing") {
-        Fail-Test "overwrite refusal changed AGENTS.md"
+    Assert-Succeeded $result "default merge installation"
+    $preservedAgents = Join-Path $repository ".coding-agent-bootstrap\existing\AGENTS.md"
+    if ((Get-Content -LiteralPath $preservedAgents -Raw).Trim() -ne "existing") {
+        Fail-Test "default install did not preserve AGENTS.md"
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $repository ".agents\BOOTSTRAP.md") -PathType Leaf)) {
+        Fail-Test "default merge did not install payload"
     }
 
     Write-Host "Testing PowerShell merge preservation..."

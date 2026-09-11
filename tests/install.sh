@@ -60,6 +60,7 @@ assert_no_staging_files() {
 echo "Testing local installation..."
 "$ROOT_DIR/install.sh" --help >"$TEST_ROOT/help-output"
 grep -F "install.sh [--merge] [--allow-current-branch] [target-repository]" "$TEST_ROOT/help-output" >/dev/null || fail "help omits installer options"
+grep -F "the default; retained for compatibility" "$TEST_ROOT/help-output" >/dev/null || fail "help does not describe default merge behavior"
 make_git_repo local-target
 printf '%s\n' "# Product specification" "" "Build the application described here." >"$TEST_REPO/README.md"
 cp -p "$TEST_REPO/README.md" "$TEST_ROOT/readme-expected"
@@ -115,17 +116,19 @@ git -C "$TEST_REPO" switch --quiet -c chore/bootstrap-test
 "$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
 [ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "feature-branch install did not install payload"
 
-echo "Testing overwrite refusal..."
+echo "Testing default preservation of existing configuration..."
 make_git_repo existing-agents-md
 printf '%s\n' "existing" >"$TEST_REPO/AGENTS.md"
-assert_failed_with "Re-run with --merge" "$ROOT_DIR/install.sh" "$TEST_REPO"
-[ "$(sed -n '1p' "$TEST_REPO/AGENTS.md")" = "existing" ] || fail "existing AGENTS.md changed"
+"$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
+[ "$(sed -n '1p' "$TEST_REPO/.coding-agent-bootstrap/existing/AGENTS.md")" = "existing" ] || fail "default install did not preserve existing AGENTS.md"
+[ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "default merge did not install payload"
 
 make_git_repo existing-agents-dir
 mkdir "$TEST_REPO/.agents"
 printf '%s\n' "existing" >"$TEST_REPO/.agents/keep"
-assert_failed_with "Re-run with --merge" "$ROOT_DIR/install.sh" "$TEST_REPO"
-[ -f "$TEST_REPO/.agents/keep" ] || fail "existing .agents content changed"
+"$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
+[ -f "$TEST_REPO/.coding-agent-bootstrap/existing/.agents/keep" ] || fail "default install did not preserve existing .agents content"
+[ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "default merge did not install payload .agents"
 
 echo "Testing full merge preservation..."
 make_git_repo full-merge
@@ -141,7 +144,7 @@ cp -p "$TEST_REPO/AGENTS.md" "$EXPECTED_FULL/AGENTS.md"
 cp -p "$TEST_REPO/CLAUDE.md" "$EXPECTED_FULL/CLAUDE.md"
 cp -Rp "$TEST_REPO/.agents" "$EXPECTED_FULL/.agents"
 
-"$ROOT_DIR/install.sh" --merge "$TEST_REPO" >/dev/null
+"$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
 cmp "$EXPECTED_FULL/AGENTS.md" "$TEST_REPO/.coding-agent-bootstrap/existing/AGENTS.md" >/dev/null || fail "AGENTS.md was not preserved byte-for-byte"
 cmp "$EXPECTED_FULL/CLAUDE.md" "$TEST_REPO/.coding-agent-bootstrap/existing/CLAUDE.md" >/dev/null || fail "CLAUDE.md was not preserved byte-for-byte"
 cmp "$EXPECTED_FULL/.agents/WORKFLOW.md" "$TEST_REPO/.coding-agent-bootstrap/existing/.agents/WORKFLOW.md" >/dev/null || fail "existing .agents file changed"
@@ -166,7 +169,7 @@ printf '%s\n' \
 chmod +x "$FAKE_BIN/mv"
 REAL_MV=$(command -v mv)
 failure_output=$TEST_ROOT/rollback-output
-if PATH="$FAKE_BIN:$PATH" CAB_TEST_REAL_MV="$REAL_MV" "$ROOT_DIR/install.sh" --merge "$TEST_REPO" >"$failure_output" 2>&1; then
+if PATH="$FAKE_BIN:$PATH" CAB_TEST_REAL_MV="$REAL_MV" "$ROOT_DIR/install.sh" "$TEST_REPO" >"$failure_output" 2>&1; then
   fail "injected post-preservation failure unexpectedly succeeded"
 fi
 cmp "$TEST_ROOT/rollback-agents-expected" "$TEST_REPO/AGENTS.md" >/dev/null || fail "rollback did not restore existing AGENTS.md"
@@ -191,7 +194,7 @@ echo "Testing existing migration-state refusal..."
 make_git_repo existing-migration-state
 mkdir -p "$TEST_REPO/.coding-agent-bootstrap/existing"
 printf '%s\n' "preserved" >"$TEST_REPO/.coding-agent-bootstrap/existing/AGENTS.md"
-assert_failed_with "temporary migration state already exists" "$ROOT_DIR/install.sh" --merge "$TEST_REPO"
+assert_failed_with "temporary migration state already exists" "$ROOT_DIR/install.sh" "$TEST_REPO"
 [ -f "$TEST_REPO/.coding-agent-bootstrap/existing/AGENTS.md" ] || fail "existing migration state changed"
 
 echo "Testing Git repository requirement..."
@@ -223,7 +226,7 @@ mkdir "$DOWNLOAD_ROOT"
   TMPDIR=$DOWNLOAD_ROOT \
     CAB_INSTALL_REPOSITORY="file://$REMOTE_SOURCE" \
     CAB_INSTALL_REF=main \
-    sh -s -- --merge <"$ROOT_DIR/install.sh" >/dev/null
+    sh -s -- <"$ROOT_DIR/install.sh" >/dev/null
 )
 
 cmp "$ROOT_DIR/bootstrap/AGENTS.md" "$REMOTE_TARGET/AGENTS.md" >/dev/null || fail "remote-style AGENTS.md does not match payload"
@@ -251,7 +254,7 @@ if (
   TMPDIR=$DOWNLOAD_ROOT \
     CAB_INSTALL_REPOSITORY="file://$REMOTE_SOURCE" \
     CAB_INSTALL_REF=incomplete \
-    sh -s -- --merge <"$ROOT_DIR/install.sh"
+    sh -s -- <"$ROOT_DIR/install.sh"
 ) >"$failure_output" 2>&1; then
   fail "merge with incomplete payload unexpectedly succeeded"
 fi
