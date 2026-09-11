@@ -49,7 +49,7 @@ This directory is recoverable migration input, not durable project context. Do n
    - Discovered facts: directly observable in the repository.
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
-5. Identify the stack, canonical commands, architecture and data flows, important boundaries, logging and observability conventions, existing workflow, useful presets, recurring procedures worth keeping as project-specific skills, and useful MCP capabilities.
+5. Identify the stack, repository topology, canonical commands, architecture and data flows, important boundaries, logging and observability conventions, existing workflow, useful presets, recurring procedures worth keeping as project-specific skills, and useful MCP capabilities.
 6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt the preset matching the remote host: `.agents/presets/git/github-flow.md` for GitHub or `.agents/presets/git/azure-devops.md` for Azure Repos.
 7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection). When Azure Repos is adopted, complete [Azure Repos Protection](#azure-repos-protection).
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
