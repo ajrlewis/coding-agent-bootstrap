@@ -6,27 +6,33 @@ It discovers the project, writes durable agent context, preserves existing guida
 
 ## Quick Start
 
-Run from the project directory.
+Run from the project directory and choose an agent.
 
-macOS or Linux:
+Codex on macOS or Linux:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- codex
 ```
 
-Windows PowerShell:
+Claude Code on macOS or Linux:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- claude
+```
+
+Codex on Windows PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1 | iex
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1))) -Agent codex
 ```
 
-Then start a coding-agent session and say:
+Claude Code on Windows PowerShell:
 
-```text
-Complete .agents/BOOTSTRAP.md for this repository.
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1))) -Agent claude
 ```
 
-That is the whole setup.
+The installer starts the selected agent in the repository with the bootstrap instructions as its initial prompt.
 
 ## What It Does
 
@@ -79,6 +85,8 @@ The first agent replaces generic scaffolds with facts discovered from the target
 Git is the only shared installer dependency. Use a POSIX shell on macOS/Linux or PowerShell on Windows.
 
 Existing agent configuration is preserved automatically; `--merge` and `-Merge` remain accepted for compatibility.
+
+Omit the agent name or `-Agent` option to install without starting a session.
 
 To intentionally install without leaving the current default branch:
 

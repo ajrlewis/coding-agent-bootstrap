@@ -30,6 +30,13 @@ Remote-style install into the current Git repository:
 curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh
 ```
 
+Remote install and start an agent with the bootstrap prompt:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- codex
+curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- claude
+```
+
 Remote compatibility form (merge is already the default):
 
 ```sh
