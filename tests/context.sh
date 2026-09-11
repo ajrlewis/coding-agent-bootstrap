@@ -35,6 +35,7 @@ for path in \
   bootstrap/.agents/WORKFLOW.md \
   bootstrap/.agents/todos/TODO.md \
   bootstrap/.agents/todos/DONE.md \
+  bootstrap/.agents/presets/architecture/monorepo.md \
   bootstrap/.agents/presets/ci/azure-pipelines.md \
   bootstrap/.agents/presets/database/snowflake.md \
   bootstrap/.agents/presets/database/sql-server.md \
@@ -43,7 +44,8 @@ for path in \
   bootstrap/.agents/presets/infrastructure/bicep.md \
   bootstrap/.agents/presets/observability/logging.md \
   bootstrap/.agents/presets/quality/api-documentation.md \
-  bootstrap/.agents/presets/quality/testing.md
+  bootstrap/.agents/presets/quality/testing.md \
+  bootstrap/.agents/presets/tooling/turborepo.md
 do
   require_file "$path"
 done
