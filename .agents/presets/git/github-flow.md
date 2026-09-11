@@ -12,4 +12,8 @@ This repository uses focused branches and pull requests into `main`.
 - Inspect CI, required checks, mergeability, and review feedback before considering the change ready.
 - Never bypass required checks, rewrite shared history casually, or force-push a shared branch without explicit policy and clear intent.
 
+When the maintainer asks to "branch add commit push and PR," treat that phrase, or a clear equivalent, as authorization to complete the whole delivery sequence. Inspect the worktree and diff, create a focused branch when still on `main`, run relevant checks, stage only the intended files, commit with a descriptive message, merge the latest `origin/main`, rerun checks affected by the merge, push the branch, and open a pull request targeting `main`. Preserve unrelated user changes and return the pull request URL.
+
+When the maintainer reports "PR merged," treat that phrase, or a clear equivalent, as a request to clean up the associated local branch. Identify and remember that branch before switching, require a clean worktree, switch to `main`, run `git pull --ff-only --prune`, show `git branch --merged main`, and delete the associated branch with `git branch -d -- <branch>`. Never force-delete a branch that Git does not recognize as merged; report it instead. If the associated branch is unclear, ask before deleting anything.
+
 Protect `main` with a GitHub rule that requires pull requests, applies to administrators, and blocks direct pushes, force pushes, and deletion. This solo-maintainer repository does not require an approving review because pull request authors cannot approve their own changes. Require the `POSIX and context` and `PowerShell` CI checks before merge.
