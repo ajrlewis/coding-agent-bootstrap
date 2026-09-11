@@ -108,7 +108,14 @@ try {
         ".agents\DOCTOR.md",
         ".agents\todos\TODO.md",
         ".agents\todos\DONE.md",
-        ".agents\presets\git\azure-devops.md"
+        ".agents\presets\git\azure-devops.md",
+        ".agents\presets\ci\azure-pipelines.md",
+        ".agents\presets\database\sql-server.md",
+        ".agents\presets\database\snowflake.md",
+        ".agents\presets\infrastructure\bicep.md",
+        ".agents\presets\observability\logging.md",
+        ".agents\presets\quality\api-documentation.md",
+        ".agents\presets\quality\testing.md"
     )) {
         if (-not (Test-Path -LiteralPath (Join-Path $repository $path) -PathType Leaf)) {
             Fail-Test "local installation omitted $path"

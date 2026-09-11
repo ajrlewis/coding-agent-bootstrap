@@ -49,13 +49,13 @@ This directory is recoverable migration input, not durable project context. Do n
    - Discovered facts: directly observable in the repository.
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
-5. Identify the stack, canonical commands, architecture and data flows, important boundaries, existing workflow and conventions, useful presets, recurring procedures worth keeping as project-specific skills, and useful MCP capabilities.
+5. Identify the stack, canonical commands, architecture and data flows, important boundaries, logging and observability conventions, existing workflow, useful presets, recurring procedures worth keeping as project-specific skills, and useful MCP capabilities.
 6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt the preset matching the remote host: `.agents/presets/git/github-flow.md` for GitHub or `.agents/presets/git/azure-devops.md` for Azure Repos.
 7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection). When Azure Repos is adopted, complete [Azure Repos Protection](#azure-repos-protection).
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
 9. When hosted secrets, deployment, data, or documentation services are adopted, complete the service-boundary reconciliation in [External Service Boundaries](#external-service-boundaries).
 10. Complete the prerequisite reconciliation in [Tooling And Host Capabilities](#tooling-and-host-capabilities).
-11. Reconcile tests and static checks using [Quality Baseline](#quality-baseline).
+11. Reconcile API documentation, tests, coverage, and static checks using [Quality Baseline](#quality-baseline).
 12. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
 13. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
@@ -152,13 +152,14 @@ Reconcile tools only after determining which project workflows and external capa
 
 Bootstrap must account explicitly for the repository's behavior verification and static checks. Do not treat a missing test, lint, format, typecheck, or build command as evidence that it is unnecessary.
 
-1. Inspect package scripts, dependency manifests, tool configuration, source layout, CI workflows, and representative tests.
-2. Identify the smallest appropriate baseline. Application, service, and library code normally need automated behavior verification plus relevant static checks. Documentation, configuration, generated-code, or similarly specialized repositories may use build, schema, link, integration, or other focused validation instead of unit tests.
+1. Inspect package scripts, dependency manifests, tool configuration, source layout, CI workflows, representative tests, coverage configuration, and API documentation conventions.
+2. Identify the smallest appropriate baseline. Application, service, and library code normally need typed callable contracts, useful public API documentation, focused unit tests, boundary integration tests, coverage reporting, and relevant static checks. Documentation, configuration, generated-code, or similarly specialized repositories may use build, schema, link, integration, or other focused validation instead of unit tests.
 3. Preserve established tools and conventions. Do not introduce a second toolchain for a check the repository already performs.
 4. If a necessary category is absent, surface it as a material bootstrap decision. Obtain maintainer approval before adding dependencies, configuration, CI workflows, or representative tests.
-5. When approved, establish the minimum ecosystem-native baseline and define fast and full verification in `.agents/COMMANDS.md`, including a focused or single-test command when supported.
-6. Run each documented command before recording it as known-good. Add stable baseline checks to CI and required-check guidance in proportion to repository risk.
-7. If a check is intentionally absent or cannot yet be added, document the rationale and record actionable unresolved work in `.agents/todos/TODO.md`. Do not silently omit it or claim the baseline is complete.
+5. When approved, establish the minimum ecosystem-native baseline and define focused, unit, integration, coverage, fast, and full verification in `.agents/COMMANDS.md` as applicable.
+6. Set a high, repository-appropriate coverage expectation and prioritize changed code, branch behavior, and important failure paths. Do not optimize for a percentage while leaving meaningful behavior untested.
+7. Run each documented command before recording it as known-good. Add stable baseline checks to CI and required-check guidance in proportion to repository risk.
+8. If documentation or a check is intentionally absent or cannot yet be added, document the rationale and record actionable unresolved work in `.agents/todos/TODO.md`. Do not silently omit it or claim the baseline is complete.
 
 ## Good Maintainer Questions
 
