@@ -8,6 +8,7 @@ param(
 $ErrorActionPreference = "Stop"
 $repositoryUrl = if ($env:CAB_INSTALL_REPOSITORY) { $env:CAB_INSTALL_REPOSITORY } else { "https://github.com/ajrlewis/coding-agent-bootstrap.git" }
 $repositoryRef = if ($env:CAB_INSTALL_REF) { $env:CAB_INSTALL_REF } else { "main" }
+$installBranch = "chore/coding-agent-bootstrap"
 $downloadDir = $null
 $stageDir = $null
 $targetDir = $null
@@ -70,12 +71,17 @@ try {
     $targetDir = (Resolve-Path -LiteralPath $TargetRepository).Path
     $migrationDir = Join-Path $targetDir ".coding-agent-bootstrap"
 
-    if (-not (Test-Path -LiteralPath (Join-Path $targetDir ".git") -PathType Container)) {
-        throw "target is not a Git repository: $targetDir. Initialize Git first with: git init"
-    }
-
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
         throw "Git is required to inspect the target repository"
+    }
+
+    if (-not (Test-Path -LiteralPath (Join-Path $targetDir ".git"))) {
+        & git -C $targetDir init --quiet
+        if ($LASTEXITCODE -ne 0) {
+            throw "unable to initialize a Git repository in: $targetDir"
+        }
+        Write-Host "Initialized Git repository in:"
+        Write-Host "  $targetDir"
     }
 
     $sourceDir = $null
@@ -111,7 +117,16 @@ try {
                 }
 
                 if ($defaultBranch -and $currentBranch -eq $defaultBranch) {
-                    throw "refusing to install on the repository's default branch: $currentBranch. Create a focused branch first with: git switch -c chore/coding-agent-bootstrap. Re-run with -AllowCurrentBranch if this is intentional."
+                    & git -C $targetDir show-ref --verify --quiet "refs/heads/$installBranch"
+                    if ($LASTEXITCODE -eq 0) {
+                        throw "install branch already exists: $installBranch. Switch to, rename, or remove that branch before installing."
+                    }
+                    & git -C $targetDir switch --quiet -c $installBranch
+                    if ($LASTEXITCODE -ne 0) {
+                        throw "unable to create install branch: $installBranch"
+                    }
+                    Write-Host "Created and switched to install branch:"
+                    Write-Host "  $installBranch"
                 }
             }
         }

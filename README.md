@@ -10,19 +10,13 @@ install -> preserve existing config if present -> discover -> reconcile -> confi
 
 ## Quick Start
 
-From the root of an existing Git repository, create a focused branch when the repository has commits and is currently on its default branch:
-
-```sh
-git switch -c chore/coding-agent-bootstrap
-```
-
-Skip that step when already on a feature branch or when the repository has no commits. Then install on Linux or macOS:
+From the target project directory, install on Linux or macOS:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh
 ```
 
-On Windows PowerShell, install after the same branch check:
+On Windows PowerShell:
 
 ```powershell
 irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1 | iex
@@ -297,7 +291,7 @@ In an empty or nearly empty Git repository, presets can help the maintainer and 
 
 A repository may use an implementation-oriented `README.md` as its only substantive project file. In that case, bootstrap treats the README as maintainer-declared intent, distinguishes the specified target state from what currently exists, and creates only concise operational agent context around it. The README remains the canonical product specification; planned components are not documented as existing, proposed commands are not marked as verified, and completing bootstrap does not imply that the specified application has been implemented.
 
-The installer currently requires an existing Git repository. It does not silently run `git init`.
+If the target is not already a Git repository, the installer initializes one. In a repository with commits, installation from the detected default branch automatically creates and switches to `chore/coding-agent-bootstrap`. Unborn repositories and existing feature branches remain on their current branch.
 
 ## Agent-Managed And Project Docs
 
@@ -309,7 +303,7 @@ Project `README.md`, user documentation, API docs, and product docs remain norma
 
 The installer has a deliberately small runtime boundary:
 
-- an existing Git repository and the `git` executable;
+- the `git` executable;
 - a POSIX `sh` environment for `install.sh`, or PowerShell for `install.ps1`;
 - `curl` only when using the POSIX remote one-liner. PowerShell's remote form uses `Invoke-RestMethod` through `irm`.
 
@@ -340,7 +334,7 @@ Prefer a repository-pinned dependency such as Supabase's project package when su
 
 ## Installation
 
-All installation modes require a Git repository. In repositories with commits, installers refuse to modify the default branch; create a focused branch first, or use the explicit `--allow-current-branch` (`-AllowCurrentBranch` in PowerShell) override when installation there is intentional. Unborn repositories are allowed. Existing direct conflicts are preserved before replacement by default. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
+All installation modes require Git. If the target is not a repository, the installer initializes it. In repositories with commits, installers create and switch to `chore/coding-agent-bootstrap` when run from the detected default branch, or remain on that branch when the explicit `--allow-current-branch` (`-AllowCurrentBranch` in PowerShell) override is supplied. If the install branch already exists, installation stops without switching branches or installing files. Unborn repositories and existing feature branches stay on their current branch. Existing direct conflicts are preserved before replacement by default. Installers stage the payload and preserved state first, clean temporary downloads, modify no unrelated files, and install no global software.
 
 ### Shell: Remote
 
@@ -352,7 +346,7 @@ curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/mai
 
 The streamed script shallow-clones the bootstrap repository into a temporary directory, copies only `bootstrap/`, and removes the temporary checkout.
 
-To intentionally install on the current default branch:
+To intentionally remain on the current default branch:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.sh | sh -s -- --allow-current-branch
@@ -380,7 +374,7 @@ Existing direct conflicts are preserved automatically. `--merge` remains accepte
 ./install.sh --merge /path/to/target/repository
 ```
 
-Add `--allow-current-branch` only when installing on the repository's default branch is intentional.
+Add `--allow-current-branch` only when remaining on the repository's default branch is intentional.
 
 ### Windows: Remote PowerShell
 
@@ -398,7 +392,7 @@ The `-Merge` switch remains accepted for compatibility:
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/ajrlewis/coding-agent-bootstrap/main/install.ps1))) -Merge
 ```
 
-Use `-AllowCurrentBranch` only when installing on the repository's default branch is intentional.
+Use `-AllowCurrentBranch` only when remaining on the repository's default branch is intentional.
 
 ### Windows: Inspectable Clone
 

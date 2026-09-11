@@ -117,12 +117,53 @@ try {
     Assert-FileBytesEqual (Join-Path $rootDir "bootstrap\AGENTS.md") (Join-Path $repository "AGENTS.md") "installed AGENTS.md and payload AGENTS.md"
     Assert-NoStagingFiles $repository
 
-    Write-Host "Testing PowerShell default-branch refusal..."
+    Write-Host "Testing PowerShell install-branch creation..."
     $repository = New-TestRepository "default-branch" -Committed
     $result = Invoke-InstallerProcess @($repository)
-    Assert-FailedWith $result "refusing to install on the repository's default branch: main" "default-branch installation"
+    Assert-Succeeded $result "install-branch creation"
+    $currentBranch = (& git -C $repository branch --show-current).Trim()
+    if ($currentBranch -ne "chore/coding-agent-bootstrap") {
+        Fail-Test "installer did not create the focused branch"
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $repository ".agents\BOOTSTRAP.md") -PathType Leaf)) {
+        Fail-Test "install-branch creation did not install payload"
+    }
+
+    Write-Host "Testing PowerShell install-branch collision..."
+    $repository = New-TestRepository "existing-install-branch" -Committed
+    & git -C $repository branch chore/coding-agent-bootstrap
+    $result = Invoke-InstallerProcess @($repository)
+    Assert-FailedWith $result "install branch already exists: chore/coding-agent-bootstrap" "install-branch collision"
+    $currentBranch = (& git -C $repository branch --show-current).Trim()
+    if ($currentBranch -ne "main") {
+        Fail-Test "install-branch collision changed the current branch"
+    }
     if (Test-Path -LiteralPath (Join-Path $repository "AGENTS.md")) {
-        Fail-Test "default-branch refusal installed AGENTS.md"
+        Fail-Test "install-branch collision installed AGENTS.md"
+    }
+
+    Write-Host "Testing PowerShell default-branch override..."
+    $repository = New-TestRepository "allowed-default-branch" -Committed
+    $result = Invoke-InstallerProcess @("-AllowCurrentBranch", $repository)
+    Assert-Succeeded $result "default-branch override"
+    $currentBranch = (& git -C $repository branch --show-current).Trim()
+    if ($currentBranch -ne "main") {
+        Fail-Test "default-branch override changed the current branch"
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $repository ".agents\BOOTSTRAP.md") -PathType Leaf)) {
+        Fail-Test "default-branch override did not install payload"
+    }
+
+    Write-Host "Testing PowerShell automatic Git initialization..."
+    $repository = Join-Path $testRoot "not-git"
+    New-Item -ItemType Directory -Path $repository | Out-Null
+    $result = Invoke-InstallerProcess @($repository)
+    Assert-Succeeded $result "automatic Git initialization"
+    if (-not (Test-Path -LiteralPath (Join-Path $repository ".git") -PathType Container)) {
+        Fail-Test "installer did not initialize Git"
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $repository ".agents\BOOTSTRAP.md") -PathType Leaf)) {
+        Fail-Test "Git initialization did not install payload"
     }
 
     Write-Host "Testing PowerShell default preservation..."

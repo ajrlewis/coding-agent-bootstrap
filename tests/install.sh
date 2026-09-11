@@ -96,24 +96,33 @@ grep -F "For README-first repositories, treat README.md as the target-state spec
 grep -F "Do not scaffold or implement the application unless separately requested." "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits the implementation boundary"
 grep -F "remove only the bootstrap-routing paragraph from AGENTS.md after setup succeeds" "$TEST_ROOT/install-output" >/dev/null || fail "installer output omits bootstrap routing cleanup"
 
-echo "Testing default-branch refusal..."
+echo "Testing automatic install-branch creation..."
 make_committed_git_repo default-branch
-assert_failed_with "refusing to install on the repository's default branch: main" "$ROOT_DIR/install.sh" "$TEST_REPO"
-[ ! -e "$TEST_REPO/AGENTS.md" ] || fail "default-branch refusal installed AGENTS.md"
-[ ! -e "$TEST_REPO/.agents" ] || fail "default-branch refusal installed .agents"
+"$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
+[ "$(git -C "$TEST_REPO" branch --show-current)" = "chore/coding-agent-bootstrap" ] || fail "installer did not create the focused branch"
+[ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "install-branch creation did not install payload"
 
 make_committed_git_repo remote-default-branch
 git -C "$TEST_REPO" branch -m trunk
 git -C "$TEST_REPO" symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/trunk
-assert_failed_with "refusing to install on the repository's default branch: trunk" "$ROOT_DIR/install.sh" "$TEST_REPO"
+"$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
+[ "$(git -C "$TEST_REPO" branch --show-current)" = "chore/coding-agent-bootstrap" ] || fail "installer did not branch from the remote default branch"
+
+make_committed_git_repo existing-install-branch
+git -C "$TEST_REPO" branch chore/coding-agent-bootstrap
+assert_failed_with "install branch already exists: chore/coding-agent-bootstrap" "$ROOT_DIR/install.sh" "$TEST_REPO"
+[ "$(git -C "$TEST_REPO" branch --show-current)" = "main" ] || fail "branch collision changed the current branch"
+[ ! -e "$TEST_REPO/AGENTS.md" ] || fail "branch collision installed AGENTS.md"
 
 make_committed_git_repo allowed-default-branch
 "$ROOT_DIR/install.sh" --allow-current-branch "$TEST_REPO" >/dev/null
+[ "$(git -C "$TEST_REPO" branch --show-current)" = "main" ] || fail "default-branch override changed the current branch"
 [ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "default-branch override did not install payload"
 
 make_committed_git_repo feature-branch
 git -C "$TEST_REPO" switch --quiet -c chore/bootstrap-test
 "$ROOT_DIR/install.sh" "$TEST_REPO" >/dev/null
+[ "$(git -C "$TEST_REPO" branch --show-current)" = "chore/bootstrap-test" ] || fail "feature-branch install changed the current branch"
 [ -f "$TEST_REPO/.agents/BOOTSTRAP.md" ] || fail "feature-branch install did not install payload"
 
 echo "Testing default preservation of existing configuration..."
@@ -197,9 +206,11 @@ printf '%s\n' "preserved" >"$TEST_REPO/.coding-agent-bootstrap/existing/AGENTS.m
 assert_failed_with "temporary migration state already exists" "$ROOT_DIR/install.sh" "$TEST_REPO"
 [ -f "$TEST_REPO/.coding-agent-bootstrap/existing/AGENTS.md" ] || fail "existing migration state changed"
 
-echo "Testing Git repository requirement..."
+echo "Testing automatic Git initialization..."
 mkdir "$TEST_ROOT/not-git"
-assert_failed_with "target is not a Git repository" "$ROOT_DIR/install.sh" "$TEST_ROOT/not-git"
+"$ROOT_DIR/install.sh" "$TEST_ROOT/not-git" >/dev/null
+[ -d "$TEST_ROOT/not-git/.git" ] || fail "installer did not initialize Git"
+[ -f "$TEST_ROOT/not-git/.agents/BOOTSTRAP.md" ] || fail "Git initialization did not install payload"
 
 echo "Testing source/target refusal..."
 assert_failed_with "source and target are the same directory" "$ROOT_DIR/install.sh" "$ROOT_DIR"

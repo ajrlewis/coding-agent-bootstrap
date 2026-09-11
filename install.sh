@@ -3,13 +3,14 @@ set -eu
 
 REPOSITORY_URL=${CAB_INSTALL_REPOSITORY:-https://github.com/ajrlewis/coding-agent-bootstrap.git}
 REPOSITORY_REF=${CAB_INSTALL_REF:-main}
+INSTALL_BRANCH=chore/coding-agent-bootstrap
 
 usage() {
   echo "Usage: install.sh [--merge] [--allow-current-branch] [target-repository]"
   echo
   echo "Options:"
   echo "  --merge                 Preserve existing configuration (the default; retained for compatibility)."
-  echo "  --allow-current-branch  Allow installation on the repository's default branch."
+  echo "  --allow-current-branch  Skip automatic branch creation on the repository's default branch."
   echo "  -h, --help              Show this help."
 }
 
@@ -145,15 +146,18 @@ fi
 TARGET_DIR=$(CDPATH= cd -- "$TARGET_DIR" && pwd)
 MIGRATION_DIR=$TARGET_DIR/.coding-agent-bootstrap
 
-if [ ! -d "$TARGET_DIR/.git" ]; then
-  echo "error: target is not a Git repository: $TARGET_DIR" >&2
-  echo "Initialize Git first with: git init" >&2
-  exit 1
-fi
-
 if ! command -v git >/dev/null 2>&1; then
   echo "error: Git is required to inspect the target repository" >&2
   exit 1
+fi
+
+if ! path_exists "$TARGET_DIR/.git"; then
+  if ! git -C "$TARGET_DIR" init --quiet; then
+    echo "error: unable to initialize a Git repository in: $TARGET_DIR" >&2
+    exit 1
+  fi
+  echo "Initialized Git repository in:"
+  echo "  $TARGET_DIR"
 fi
 
 SOURCE_DIR=
@@ -187,11 +191,17 @@ if [ "$ALLOW_CURRENT_BRANCH" -eq 0 ] && git -C "$TARGET_DIR" rev-parse --verify 
     fi
 
     if [ -n "$DEFAULT_BRANCH" ] && [ "$CURRENT_BRANCH" = "$DEFAULT_BRANCH" ]; then
-      echo "error: refusing to install on the repository's default branch: $CURRENT_BRANCH" >&2
-      echo "Create a focused branch first:" >&2
-      echo "  git switch -c chore/coding-agent-bootstrap" >&2
-      echo "Or re-run with --allow-current-branch if this is intentional." >&2
-      exit 1
+      if git -C "$TARGET_DIR" show-ref --verify --quiet "refs/heads/$INSTALL_BRANCH"; then
+        echo "error: install branch already exists: $INSTALL_BRANCH" >&2
+        echo "Switch to, rename, or remove that branch before installing." >&2
+        exit 1
+      fi
+      if ! git -C "$TARGET_DIR" switch --quiet -c "$INSTALL_BRANCH"; then
+        echo "error: unable to create install branch: $INSTALL_BRANCH" >&2
+        exit 1
+      fi
+      echo "Created and switched to install branch:"
+      echo "  $INSTALL_BRANCH"
     fi
   fi
 fi
