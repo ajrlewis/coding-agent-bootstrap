@@ -126,6 +126,46 @@ try {
     Assert-FileBytesEqual (Join-Path $rootDir "bootstrap\AGENTS.md") (Join-Path $repository "AGENTS.md") "installed AGENTS.md and payload AGENTS.md"
     Assert-NoStagingFiles $repository
 
+    Write-Host "Testing PowerShell post-install agent startup..."
+    $agentBin = Join-Path $testRoot "agent-bin"
+    New-Item -ItemType Directory -Path $agentBin | Out-Null
+    foreach ($agentName in @("codex", "claude")) {
+        if ($IsWindows) {
+            $agentPath = Join-Path $agentBin "$agentName.cmd"
+            [System.IO.File]::WriteAllText($agentPath, "@echo off`r`necho %CD%>`"%CAB_TEST_AGENT_CWD%`"`r`necho %*>`"%CAB_TEST_AGENT_ARGS%`"`r`n")
+        }
+        else {
+            $agentPath = Join-Path $agentBin $agentName
+            [System.IO.File]::WriteAllText($agentPath, "#!/bin/sh`nprintf '%s\n' `"`$PWD`" >`"`$CAB_TEST_AGENT_CWD`"`nprintf '%s\n' `"`$@`" >`"`$CAB_TEST_AGENT_ARGS`"`n")
+            & chmod +x $agentPath
+        }
+    }
+
+    $originalPath = $env:PATH
+    try {
+        $env:PATH = $agentBin + [System.IO.Path]::PathSeparator + $originalPath
+        foreach ($agentName in @("codex", "claude")) {
+            $repository = New-TestRepository "$agentName-start"
+            $env:CAB_TEST_AGENT_CWD = Join-Path $testRoot "$agentName-cwd"
+            $env:CAB_TEST_AGENT_ARGS = Join-Path $testRoot "$agentName-args"
+            $result = Invoke-InstallerProcess @("-Agent", $agentName, $repository)
+            Assert-Succeeded $result "$agentName startup"
+            $expectedAgentTarget = (Resolve-Path -LiteralPath $repository).Path
+            if ((Get-Content -LiteralPath $env:CAB_TEST_AGENT_CWD -Raw).Trim() -ne $expectedAgentTarget) {
+                Fail-Test "$agentName startup used the wrong working directory"
+            }
+            if (-not (Get-Content -LiteralPath $env:CAB_TEST_AGENT_ARGS -Raw).Contains("Complete .agents/BOOTSTRAP.md")) {
+                Fail-Test "$agentName startup omitted the bootstrap prompt"
+            }
+            Assert-NoStagingFiles $repository
+        }
+    }
+    finally {
+        $env:PATH = $originalPath
+        Remove-Item Env:\CAB_TEST_AGENT_CWD -ErrorAction SilentlyContinue
+        Remove-Item Env:\CAB_TEST_AGENT_ARGS -ErrorAction SilentlyContinue
+    }
+
     Write-Host "Testing PowerShell install-branch creation..."
     $repository = New-TestRepository "default-branch" -Committed
     $result = Invoke-InstallerProcess @($repository)

@@ -1,6 +1,8 @@
 param(
     [switch]$Merge,
     [switch]$AllowCurrentBranch,
+    [ValidateSet("codex", "claude")]
+    [string]$Agent,
     [Parameter(Position = 0)]
     [string]$TargetRepository = (Get-Location).Path
 )
@@ -9,6 +11,7 @@ $ErrorActionPreference = "Stop"
 $repositoryUrl = if ($env:CAB_INSTALL_REPOSITORY) { $env:CAB_INSTALL_REPOSITORY } else { "https://github.com/ajrlewis/coding-agent-bootstrap.git" }
 $repositoryRef = if ($env:CAB_INSTALL_REF) { $env:CAB_INSTALL_REF } else { "main" }
 $installBranch = "chore/coding-agent-bootstrap"
+$agentPrompt = "Complete .agents/BOOTSTRAP.md for this repository before normal project work. Do not scaffold or implement the application unless separately requested."
 $downloadDir = $null
 $stageDir = $null
 $targetDir = $null
@@ -20,6 +23,7 @@ $installedAgentsDir = $false
 $existingAgentsMd = $false
 $existingClaudeMd = $false
 $existingAgentsDir = $false
+$installComplete = $false
 
 function Copy-PreservedPath {
     param(
@@ -73,6 +77,10 @@ try {
 
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
         throw "Git is required to inspect the target repository"
+    }
+
+    if ($Agent -and -not (Get-Command $Agent -ErrorAction SilentlyContinue)) {
+        throw "requested agent is not installed or not on PATH: $Agent"
     }
 
     if (-not (Test-Path -LiteralPath (Join-Path $targetDir ".git"))) {
@@ -191,6 +199,7 @@ try {
     $installedClaudeMd = $true
     Move-Item -LiteralPath $payloadAgents -Destination (Join-Path $targetDir ".agents")
     $installedAgentsDir = $true
+    $installComplete = $true
 
     Write-Host "Installed coding-agent-bootstrap into:"
     Write-Host "  $targetDir"
@@ -207,13 +216,37 @@ try {
     Write-Host "- For README-first repositories, treat README.md as the target-state specification."
     Write-Host "- Do not scaffold or implement the application unless separately requested."
     Write-Host "- Preserve CLAUDE.md; remove only the bootstrap-routing paragraph from AGENTS.md after setup succeeds."
+
+    if ($Agent) {
+        if ($stageDir -and (Test-Path -LiteralPath $stageDir)) {
+            Remove-Item -LiteralPath $stageDir -Recurse -Force
+            $stageDir = $null
+        }
+        if ($downloadDir -and (Test-Path -LiteralPath $downloadDir)) {
+            Remove-Item -LiteralPath $downloadDir -Recurse -Force
+            $downloadDir = $null
+        }
+
+        Write-Host ""
+        Write-Host "Starting $Agent in:"
+        Write-Host "  $targetDir"
+        Push-Location -LiteralPath $targetDir
+        try {
+            & $Agent $agentPrompt
+        }
+        finally {
+            Pop-Location
+        }
+    }
 }
 catch {
     $installError = $_
-    if ($installedAgentsMd) { Remove-Item -LiteralPath (Join-Path $targetDir "AGENTS.md") -Force -ErrorAction SilentlyContinue }
-    if ($installedClaudeMd) { Remove-Item -LiteralPath (Join-Path $targetDir "CLAUDE.md") -Force -ErrorAction SilentlyContinue }
-    if ($installedAgentsDir) { Remove-Item -LiteralPath (Join-Path $targetDir ".agents") -Recurse -Force -ErrorAction SilentlyContinue }
-    if ($migrationInstalled) { Restore-ExistingConfiguration }
+    if (-not $installComplete) {
+        if ($installedAgentsMd) { Remove-Item -LiteralPath (Join-Path $targetDir "AGENTS.md") -Force -ErrorAction SilentlyContinue }
+        if ($installedClaudeMd) { Remove-Item -LiteralPath (Join-Path $targetDir "CLAUDE.md") -Force -ErrorAction SilentlyContinue }
+        if ($installedAgentsDir) { Remove-Item -LiteralPath (Join-Path $targetDir ".agents") -Recurse -Force -ErrorAction SilentlyContinue }
+        if ($migrationInstalled) { Restore-ExistingConfiguration }
+    }
     Write-Error $installError
 }
 finally {
