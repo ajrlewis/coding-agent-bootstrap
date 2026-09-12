@@ -39,4 +39,6 @@ Do not require every possible check for every task. Define relevant fast and ful
 
 During bootstrap, account explicitly for the repository's behavior verification and static checks. A missing test or linting category requires a documented rationale, an approved baseline addition, or an actionable entry in `.agents/todos/TODO.md`; it is not an implicit exemption.
 
+Also establish the vulnerability-checking workflow described in `.agents/SECURITY.md`: adopted dependency and code scanners, severity thresholds, finding ownership, remediation and exception handling, and the checks that belong in CI. Treat missing or incomplete coverage as an explicit gap.
+
 Remove this scaffold guidance after documenting the target-specific workflow.

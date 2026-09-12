@@ -5,7 +5,7 @@
 ## Components
 
 - Root `AGENTS.md`, `CLAUDE.md`, and `.agents/` configure agents developing this repository.
-- `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; its doctor procedure, preset library, and MCP library are reusable discovery material.
+- `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; its doctor and security procedures, preset library, and MCP library are reusable discovery material.
 - `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. It preserves direct conflicts under `.coding-agent-bootstrap/existing/` by default; `--merge` remains a compatibility option.
 - `install.ps1` provides equivalent local and remote Windows behavior, with `-Merge` retained for compatibility; `install.bat` is its local compatibility entrypoint.
 - `tests/install.sh` and `tests/install.ps1` exercise platform-specific installation, Git initialization, branch creation, default merge-preservation, refusal, and rollback behavior.

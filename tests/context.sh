@@ -23,6 +23,7 @@ for path in \
   .agents/ARCHITECTURE.md \
   .agents/COMMANDS.md \
   .agents/DOCTOR.md \
+  .agents/SECURITY.md \
   .agents/WORKFLOW.md \
   .agents/todos/TODO.md \
   .agents/todos/DONE.md \
@@ -32,6 +33,7 @@ for path in \
   bootstrap/.agents/BOOTSTRAP.md \
   bootstrap/.agents/COMMANDS.md \
   bootstrap/.agents/DOCTOR.md \
+  bootstrap/.agents/SECURITY.md \
   bootstrap/.agents/WORKFLOW.md \
   bootstrap/.agents/todos/TODO.md \
   bootstrap/.agents/todos/DONE.md \
@@ -55,6 +57,7 @@ for route in \
   '.agents/COMMANDS.md' \
   '.agents/ARCHITECTURE.md' \
   '.agents/DOCTOR.md' \
+  '.agents/SECURITY.md' \
   '.agents/todos/TODO.md' \
   '.agents/todos/DONE.md'
 do
@@ -75,10 +78,11 @@ fi
 [ ! -e .agents/TODO.md ] || fail "root legacy TODO file exists"
 [ ! -e bootstrap/.agents/TODO.md ] || fail "payload legacy TODO file exists"
 
-[ "$(sed -n '1p' .agents/VERSION)" = "2" ] || fail "root agent-context version is not 2"
-[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "4" ] || fail "payload version is not 4"
+[ "$(sed -n '1p' .agents/VERSION)" = "3" ] || fail "root agent-context version is not 3"
+[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "5" ] || fail "payload version is not 5"
 
 cmp .agents/DOCTOR.md bootstrap/.agents/DOCTOR.md >/dev/null || fail "root and payload doctor procedures differ"
+cmp .agents/SECURITY.md bootstrap/.agents/SECURITY.md >/dev/null || fail "root and payload security procedures differ"
 if cmp .agents/ARCHITECTURE.md bootstrap/.agents/ARCHITECTURE.md >/dev/null; then
   fail "root development architecture matches the target payload"
 fi

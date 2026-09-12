@@ -106,6 +106,7 @@ try {
         "CLAUDE.md",
         ".agents\BOOTSTRAP.md",
         ".agents\DOCTOR.md",
+        ".agents\SECURITY.md",
         ".agents\todos\TODO.md",
         ".agents\todos\DONE.md",
         ".agents\presets\architecture\monorepo.md",
