@@ -17,7 +17,8 @@ Define success. Test the result. Do not declare completion without evidence.
 - `.agents/WORKFLOW.md` - the project's development process.
 - `.agents/COMMANDS.md` - canonical verified commands.
 - `.agents/ARCHITECTURE.md` - system boundaries and invariants.
-- `.agents/DOCTOR.md` - refresh and consistency checks for agent context; use it when asked to doctor, audit, lint, or refresh the agent files.
+- `.agents/DOCTOR.md` - refresh and consistency checks for agent context; use it when asked to doctor, lint, refresh, or audit the agent files.
+- `.agents/SECURITY.md` - dependency and code vulnerability audit procedure; use it for security reviews and vulnerability checking.
 - `.agents/todos/TODO.md` - active agent-managed follow-up work.
 - `.agents/todos/DONE.md` - archive of completed agent-managed follow-up work.
 - `.agents/presets/` - adopted engineering conventions.

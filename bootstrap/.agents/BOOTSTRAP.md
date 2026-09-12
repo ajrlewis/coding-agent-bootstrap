@@ -30,6 +30,7 @@ This directory is recoverable migration input, not durable project context. Do n
    - exact commands into `.agents/COMMANDS.md`;
    - development process into `.agents/WORKFLOW.md`;
    - system boundaries and invariants into `.agents/ARCHITECTURE.md`;
+   - vulnerability checking and risk-handling policy into `.agents/SECURITY.md` and the relevant canonical command or workflow files;
    - active persistent deferred work into `.agents/todos/TODO.md` and completed follow-up history into `.agents/todos/DONE.md`;
    - adopted stack or workflow conventions into `.agents/presets/`;
    - reusable task procedures into `.agents/skills/`;
@@ -56,8 +57,9 @@ This directory is recoverable migration input, not durable project context. Do n
 9. When hosted secrets, deployment, data, or documentation services are adopted, complete the service-boundary reconciliation in [External Service Boundaries](#external-service-boundaries).
 10. Complete the prerequisite reconciliation in [Tooling And Host Capabilities](#tooling-and-host-capabilities).
 11. Reconcile API documentation, tests, coverage, and static checks using [Quality Baseline](#quality-baseline).
-12. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
-13. Rewrite the scaffold canonical files into concise target-specific documentation:
+12. Reconcile dependency and code vulnerability checking using [Security Baseline](#security-baseline) and `.agents/SECURITY.md`.
+13. Ask the maintainer only for unresolved facts or meaningful policy conflicts, such as project goals, invisible constraints, compatibility requirements, protected areas, deployment/release constraints, security requirements, or a project-specific definition of done.
+14. Rewrite the scaffold canonical files into concise target-specific documentation:
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
@@ -66,12 +68,12 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/presets/`
    - `.agents/skills/` when the project has reusable task procedures
    - `.agents/mcp/`
-14. Tailor adopted presets and project-specific skills to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-15. After deleting unselected files, remove every empty directory at or below `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, working from the deepest directories upward. Remove an empty managed root as well; preserve the canonical `.agents/` directory itself.
-16. Inspect the resulting filesystem tree with `find .agents -print` or a platform-equivalent command. Do not rely on Git status, because Git does not report empty directories. Bootstrap is incomplete while an empty template directory remains.
-17. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
-18. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
-19. Remove the paragraph beginning `If .agents/BOOTSTRAP.md exists` from root `AGENTS.md`, then remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/`, only after setup and any migration are genuinely complete. Confirm the remaining `AGENTS.md` still routes to every durable canonical file.
+15. Tailor adopted presets and project-specific skills to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
+16. After deleting unselected files, remove every empty directory at or below `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, working from the deepest directories upward. Remove an empty managed root as well; preserve the canonical `.agents/` directory itself.
+17. Inspect the resulting filesystem tree with `find .agents -print` or a platform-equivalent command. Do not rely on Git status, because Git does not report empty directories. Bootstrap is incomplete while an empty template directory remains.
+18. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
+19. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
+20. Remove the paragraph beginning `If .agents/BOOTSTRAP.md exists` from root `AGENTS.md`, then remove `.agents/BOOTSTRAP.md` and `.coding-agent-bootstrap/`, only after setup and any migration are genuinely complete. Confirm the remaining `AGENTS.md` still routes to every durable canonical file.
 
 Do not create parallel substitutes such as `.agents/WORKFLOWS.md` or `.agents/CHECKLISTS.md` during bootstrap. Add a non-canonical file only when the target project has a distinct, durable need for it, and route to it from the canonical context where appropriate.
 
@@ -160,6 +162,17 @@ Bootstrap must account explicitly for the repository's behavior verification and
 6. Set a high, repository-appropriate coverage expectation and prioritize changed code, branch behavior, and important failure paths. Do not optimize for a percentage while leaving meaningful behavior untested.
 7. Run each documented command before recording it as known-good. Add stable baseline checks to CI and required-check guidance in proportion to repository risk.
 8. If documentation or a check is intentionally absent or cannot yet be added, document the rationale and record actionable unresolved work in `.agents/todos/TODO.md`. Do not silently omit it or claim the baseline is complete.
+
+## Security Baseline
+
+Bootstrap must establish how the target repository checks third-party components and first-party code for vulnerabilities. Use `.agents/SECURITY.md` as the durable audit procedure.
+
+1. Inventory manifests, lockfiles, container definitions, infrastructure configuration, existing security tools, hosted scanners, dependency-update automation, CI checks, and security policy documentation.
+2. Prefer existing ecosystem-native or repository-pinned tools. Do not add a scanner, hosted service, source upload, credential, or CI integration without maintainer authorization.
+3. Identify commands that inspect resolved direct and transitive dependency versions against current advisories, plus applicable static code, secret, container, and infrastructure checks. Record only adopted, verified commands in `.agents/COMMANDS.md`.
+4. Agree on severity and release thresholds appropriate to the project. Propose no known exploitable critical or high findings as the default release baseline, with explicit triage for medium and low findings, but do not silently turn that proposal into policy.
+5. Decide where unresolved findings are tracked, how accepted risks are documented and revisited, and which checks should block CI. Preserve an existing canonical security workflow when one exists.
+6. If a necessary category is unavailable or cannot be verified, state the coverage gap and record actionable setup work in `.agents/todos/TODO.md`; do not equate a missing or incomplete scan with safety.
 
 ## Good Maintainer Questions
 

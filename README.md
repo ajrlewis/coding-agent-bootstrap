@@ -67,6 +67,7 @@ CLAUDE.md                 compatibility pointer
 ├── COMMANDS.md           exact verified commands
 ├── ARCHITECTURE.md       system boundaries and invariants
 ├── DOCTOR.md             context audit procedure
+├── SECURITY.md           code and dependency vulnerability audit procedure
 ├── todos/                active and completed follow-up work
 ├── presets/              candidate engineering conventions
 └── mcp/                  candidate external capabilities
