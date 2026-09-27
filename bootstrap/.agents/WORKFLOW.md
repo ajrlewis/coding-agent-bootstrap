@@ -20,6 +20,8 @@ select a work item
 
 Use one branch per work item by default. Split a parent item when it needs multiple independently reviewable changes. Preserve existing tracker or Git-host automation instead of duplicating its status updates manually.
 
+`.agents/sessions/ACTIVE.md` is the immediate repository handoff, not a backlog mirror. A tracker may remain canonical for priorities and work-item detail. In a monorepo, keep one workspace-level active brief even when it targets one product; nested `AGENTS.md` files provide local durable constraints.
+
 Adapt the normal loop where appropriate:
 
 ```text
@@ -31,9 +33,13 @@ understand task
 -> run relevant verification from .agents/COMMANDS.md
 -> review the diff
 -> update agent-managed context if required
+-> when the active session is complete, archive its brief and reconcile deferred work
+-> replace ACTIVE.md with the next explicitly selected brief or state that no objective is selected
 -> archive completed follow-up work in .agents/todos/DONE.md
--> record deferred work in .agents/todos/TODO.md
+-> record agent-managed setup follow-ups in .agents/todos/TODO.md
 ```
+
+Advance the session handoff in the implementation pull request when practical so the merged default branch remains truthful. Move durable facts into their canonical documentation, and include completion metadata in the archived brief. Do not invent a next priority when none has been selected. `.agents/sessions/DEFERRED.md` holds optional product-planning input; `.agents/todos/TODO.md` remains limited to persistent agent-managed setup follow-ups.
 
 Do not require every possible check for every task. Define relevant fast and full verification in `.agents/COMMANDS.md` based on the actual project.
 
