@@ -107,6 +107,9 @@ try {
         ".agents\BOOTSTRAP.md",
         ".agents\DOCTOR.md",
         ".agents\SECURITY.md",
+        ".agents\sessions\ACTIVE.md",
+        ".agents\sessions\DEFERRED.md",
+        ".agents\sessions\archive\README.md",
         ".agents\todos\TODO.md",
         ".agents\todos\DONE.md",
         ".agents\presets\architecture\monorepo.md",
@@ -125,6 +128,18 @@ try {
         }
     }
     Assert-FileBytesEqual (Join-Path $rootDir "bootstrap\AGENTS.md") (Join-Path $repository "AGENTS.md") "installed AGENTS.md and payload AGENTS.md"
+    if (-not (Get-Content -LiteralPath (Join-Path $repository "AGENTS.md") -Raw).Contains(".agents/sessions/ACTIVE.md")) {
+        Fail-Test "AGENTS.md does not route the active session"
+    }
+    if (-not (Get-Content -LiteralPath (Join-Path $repository ".agents\sessions\ACTIVE.md") -Raw).Contains("No implementation objective is selected.")) {
+        Fail-Test "ACTIVE.md selects an objective by default"
+    }
+    if (Test-Path -LiteralPath (Join-Path $repository "NEXT_SESSION.md")) {
+        Fail-Test "generic payload installed a competing NEXT_SESSION.md"
+    }
+    if ((Get-Content -LiteralPath (Join-Path $repository ".agents\VERSION") -Raw).Trim() -ne "6") {
+        Fail-Test "payload version is not 6"
+    }
     Assert-NoStagingFiles $repository
 
     Write-Host "Testing PowerShell install-branch creation..."
@@ -193,20 +208,24 @@ try {
     $repository = New-TestRepository "merge-preservation"
     [System.IO.File]::WriteAllText((Join-Path $repository "AGENTS.md"), "existing agents without trailing newline")
     Set-Content -LiteralPath (Join-Path $repository "CLAUDE.md") -Value "existing claude"
+    Set-Content -LiteralPath (Join-Path $repository "NEXT_SESSION.md") -Value "legacy handoff"
     New-Item -ItemType Directory -Path (Join-Path $repository ".agents\nested") | Out-Null
     [System.IO.File]::WriteAllText((Join-Path $repository ".agents\nested\context.md"), "nested bytes")
     $expectedAgents = Join-Path $testRoot "expected-agents.md"
     $expectedClaude = Join-Path $testRoot "expected-claude.md"
     $expectedContext = Join-Path $testRoot "expected-context.md"
+    $expectedSession = Join-Path $testRoot "expected-next-session.md"
     Copy-Item -LiteralPath (Join-Path $repository "AGENTS.md") -Destination $expectedAgents
     Copy-Item -LiteralPath (Join-Path $repository "CLAUDE.md") -Destination $expectedClaude
     Copy-Item -LiteralPath (Join-Path $repository ".agents\nested\context.md") -Destination $expectedContext
+    Copy-Item -LiteralPath (Join-Path $repository "NEXT_SESSION.md") -Destination $expectedSession
     $result = Invoke-InstallerProcess @("-Merge", $repository)
     Assert-Succeeded $result "merge installation"
     $preservedRoot = Join-Path $repository ".coding-agent-bootstrap\existing"
     Assert-FileBytesEqual $expectedAgents (Join-Path $preservedRoot "AGENTS.md") "preserved AGENTS.md and original"
     Assert-FileBytesEqual $expectedClaude (Join-Path $preservedRoot "CLAUDE.md") "preserved CLAUDE.md and original"
     Assert-FileBytesEqual $expectedContext (Join-Path $preservedRoot ".agents\nested\context.md") "preserved nested context and original"
+    Assert-FileBytesEqual $expectedSession (Join-Path $repository "NEXT_SESSION.md") "preserved legacy session handoff and original"
     Assert-NoStagingFiles $repository
 
     Write-Host "Testing PowerShell rollback after preservation..."

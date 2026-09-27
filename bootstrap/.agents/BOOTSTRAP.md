@@ -30,8 +30,11 @@ This directory is recoverable migration input, not durable project context. Do n
    - exact commands into `.agents/COMMANDS.md`;
    - development process into `.agents/WORKFLOW.md`;
    - system boundaries and invariants into `.agents/ARCHITECTURE.md`;
+   - one explicitly selected unfinished implementation objective into `.agents/sessions/ACTIVE.md`;
+   - plausible but unselected product work into `.agents/sessions/DEFERRED.md`;
+   - completed implementation briefs into `.agents/sessions/archive/` with completion metadata;
    - vulnerability checking and risk-handling policy into `.agents/SECURITY.md` and the relevant canonical command or workflow files;
-   - active persistent deferred work into `.agents/todos/TODO.md` and completed follow-up history into `.agents/todos/DONE.md`;
+   - active persistent agent-managed setup follow-ups into `.agents/todos/TODO.md` and completed follow-up history into `.agents/todos/DONE.md`;
    - adopted stack or workflow conventions into `.agents/presets/`;
    - reusable task procedures into `.agents/skills/`;
    - desired external capabilities into `.agents/mcp/`.
@@ -40,6 +43,8 @@ This directory is recoverable migration input, not durable project context. Do n
 6. Do not discard rules merely because bootstrap defaults differ.
 7. Never silently resolve conflicting behavioral or workflow policies. Identify their likely sources, ask the maintainer when intent is unclear, and preserve existing project-specific intent until resolved.
 8. Remove `.coding-agent-bootstrap/` only after migration and validation are complete.
+
+Inspect preserved and repository-local legacy handoff files such as `NEXT_SESSION.md`, `DEFERRED_SESSION.md`, and product-local equivalents. Consolidate their meaning semantically; do not copy stale files mechanically. Current code, tests, architecture, and product specifications take precedence. Archive completed briefs, defer plausible unselected work, and place at most one explicitly selected unfinished objective in `ACTIVE.md`. Conflicting or ambiguous priorities require maintainer input. Do not delete or relocate a target repository's legacy files mechanically; remove or revise them only as part of reviewed reconciliation.
 
 ## Procedure
 
@@ -63,13 +68,16 @@ This directory is recoverable migration input, not durable project context. Do n
    - `.agents/WORKFLOW.md`
    - `.agents/COMMANDS.md`
    - `.agents/ARCHITECTURE.md`
+   - `.agents/sessions/ACTIVE.md`
+   - `.agents/sessions/DEFERRED.md`
+   - `.agents/sessions/archive/`
    - `.agents/todos/TODO.md`
    - `.agents/todos/DONE.md`
    - `.agents/presets/`
    - `.agents/skills/` when the project has reusable task procedures
    - `.agents/mcp/`
 15. Tailor adopted presets and project-specific skills to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-16. After deleting unselected files, remove every empty directory at or below `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, working from the deepest directories upward. Remove an empty managed root as well; preserve the canonical `.agents/` directory itself.
+16. After deleting unselected files, remove every empty directory at or below `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, working from the deepest directories upward. Remove an empty managed root as well; preserve `.agents/` and the non-empty canonical `.agents/sessions/archive/` directory.
 17. Inspect the resulting filesystem tree with `find .agents -print` or a platform-equivalent command. Do not rely on Git status, because Git does not report empty directories. Bootstrap is incomplete while an empty template directory remains.
 18. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
 19. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.

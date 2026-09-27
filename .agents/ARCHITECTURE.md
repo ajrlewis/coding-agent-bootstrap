@@ -30,6 +30,7 @@
 - Exact project commands live in the relevant `.agents/COMMANDS.md`, not presets or skills.
 - Only the payload contains `.agents/BOOTSTRAP.md`; installed repositories remove it and its `AGENTS.md` routing paragraph after first-run configuration.
 - Active and completed agent-managed follow-up work stay separate under `.agents/todos/`.
+- One workspace-level `.agents/sessions/ACTIVE.md` owns the immediate implementation handoff; deferred product work and completed session evidence remain separate under `.agents/sessions/`.
 - Installed target repositories should keep only adopted presets, project-specific skills, and desired MCP capabilities.
 - Default installation must preserve existing `AGENTS.md`, `CLAUDE.md`, or `.agents/` before replacement and retain recoverable state on failure.
 - Installers initialize Git when needed. From a committed default branch they create and switch to `chore/coding-agent-bootstrap` unless the user supplies the explicit current-branch override; unborn repositories and existing feature branches remain on their current branch.
