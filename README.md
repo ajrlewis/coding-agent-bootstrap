@@ -72,11 +72,12 @@ CLAUDE.md                 compatibility pointer
 │   ├── ACTIVE.md         one immediate implementation handoff
 │   ├── DEFERRED.md       unresolved follow-ups and optional future slices
 │   └── archive/          completed session briefs
-├── presets/              candidate engineering conventions
-└── mcp/                  candidate external capabilities
+└── presets/git/          GitHub and Azure Repos workflow defaults
 ```
 
-The first agent replaces generic scaffolds with facts discovered from the target repository and removes irrelevant presets and capabilities.
+The first agent replaces generic scaffolds with facts discovered from the target repository and keeps only the Git workflow preset that applies.
+
+Optional technology presets and MCP capability templates remain in the source repository under `catalog/`. They are reference material and are not installed into target repositories.
 
 `ACTIVE.md` is the single workspace-level handoff, including in monorepos. Deferred items remain planning input, completed briefs remain historical evidence, and external trackers can remain the canonical backlog.
 

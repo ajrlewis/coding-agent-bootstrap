@@ -110,16 +110,8 @@ try {
         ".agents\sessions\ACTIVE.md",
         ".agents\sessions\DEFERRED.md",
         ".agents\sessions\archive\README.md",
-        ".agents\presets\architecture\monorepo.md",
         ".agents\presets\git\azure-devops.md",
-        ".agents\presets\ci\azure-pipelines.md",
-        ".agents\presets\database\sql-server.md",
-        ".agents\presets\database\snowflake.md",
-        ".agents\presets\infrastructure\bicep.md",
-        ".agents\presets\observability\logging.md",
-        ".agents\presets\quality\api-documentation.md",
-        ".agents\presets\quality\testing.md",
-        ".agents\presets\tooling\turborepo.md"
+        ".agents\presets\git\github-flow.md"
     )) {
         if (-not (Test-Path -LiteralPath (Join-Path $repository $path) -PathType Leaf)) {
             Fail-Test "local installation omitted $path"
@@ -138,8 +130,14 @@ try {
     if (Test-Path -LiteralPath (Join-Path $repository ".agents\todos")) {
         Fail-Test "removed TODO directory was installed"
     }
-    if ((Get-Content -LiteralPath (Join-Path $repository ".agents\VERSION") -Raw).Trim() -ne "7") {
-        Fail-Test "payload version is not 7"
+    if (Test-Path -LiteralPath (Join-Path $repository ".agents\presets\architecture")) {
+        Fail-Test "optional preset catalogue was installed"
+    }
+    if (Test-Path -LiteralPath (Join-Path $repository ".agents\mcp")) {
+        Fail-Test "optional MCP catalogue was installed"
+    }
+    if ((Get-Content -LiteralPath (Join-Path $repository ".agents\VERSION") -Raw).Trim() -ne "8") {
+        Fail-Test "payload version is not 8"
     }
     Assert-NoStagingFiles $repository
 

@@ -35,9 +35,9 @@ This directory is recoverable migration input, not durable project context. Do n
    - completed implementation briefs into `.agents/sessions/archive/` with completion metadata;
    - vulnerability checking and risk-handling policy into `.agents/SECURITY.md` and the relevant canonical command or workflow files;
    - unresolved follow-up work into `.agents/sessions/DEFERRED.md` when it does not belong in the canonical issue tracker;
-   - adopted stack or workflow conventions into `.agents/presets/`;
+   - an adopted Git workflow into `.agents/presets/git/`;
    - reusable task procedures into `.agents/skills/`;
-   - desired external capabilities into `.agents/mcp/`.
+   - external capability boundaries into `.agents/ARCHITECTURE.md` and `.agents/WORKFLOW.md`.
 4. Deduplicate compatible information instead of repeating it across files.
 5. Existing repository conventions take precedence over generic presets.
 6. Do not discard rules merely because bootstrap defaults differ.
@@ -55,7 +55,7 @@ Inspect preserved and repository-local legacy handoff files such as `NEXT_SESSIO
    - Discovered facts: directly observable in the repository.
    - Declared facts: explicitly provided by the maintainer.
    - Derived conclusions: reasonable conclusions from discovered or declared facts.
-5. Identify the stack, repository topology, canonical commands, architecture and data flows, important boundaries, logging and observability conventions, existing workflow, useful presets, recurring procedures worth keeping as project-specific skills, and useful MCP capabilities.
+5. Identify the stack, repository topology, canonical commands, architecture and data flows, important boundaries, logging and observability conventions, existing workflow, recurring procedures worth keeping as project-specific skills, and useful external capabilities.
 6. Existing repository conventions take precedence over generic presets. Do not replace an intentional stack or workflow merely because a preset prefers something else. If no Git policy exists, adopt the preset matching the remote host: `.agents/presets/git/github-flow.md` for GitHub or `.agents/presets/git/azure-devops.md` for Azure Repos.
 7. When GitHub Flow is adopted, complete the remote repository protection checks in [GitHub Flow Protection](#github-flow-protection). When Azure Repos is adopted, complete [Azure Repos Protection](#azure-repos-protection).
 8. When Linear or another external tracker is adopted, complete the work-tracking reconciliation in [External Work Tracking](#external-work-tracking).
@@ -71,11 +71,10 @@ Inspect preserved and repository-local legacy handoff files such as `NEXT_SESSIO
    - `.agents/sessions/ACTIVE.md`
    - `.agents/sessions/DEFERRED.md`
    - `.agents/sessions/archive/`
-   - `.agents/presets/`
+   - `.agents/presets/git/`
    - `.agents/skills/` when the project has reusable task procedures
-   - `.agents/mcp/`
-15. Tailor adopted presets and project-specific skills to the repository. Keep only project-relevant durable context; remove obsolete or unselected presets, skills, and MCP capability files.
-16. After deleting unselected files, remove every empty directory at or below `.agents/presets/`, `.agents/skills/`, and `.agents/mcp/`, working from the deepest directories upward. Remove an empty managed root as well; preserve `.agents/` and the non-empty canonical `.agents/sessions/archive/` directory.
+15. Tailor the adopted Git workflow preset and project-specific skills to the repository. Remove the unselected Git preset and obsolete skills.
+16. After deleting unselected files, remove every empty directory at or below `.agents/presets/` and `.agents/skills/`, working from the deepest directories upward. Remove an empty managed root as well; preserve `.agents/` and the non-empty canonical `.agents/sessions/archive/` directory.
 17. Inspect the resulting filesystem tree with `find .agents -print` or a platform-equivalent command. Do not rely on Git status, because Git does not report empty directories. Bootstrap is incomplete while an empty template directory remains.
 18. Validate documented commands where practical before presenting them as canonical. Never claim a check passed unless it was run; state what could not be run and why.
 19. Check that instructions do not contradict each other or duplicate the same knowledge in multiple places.
@@ -126,7 +125,7 @@ When Linear or another external tracker is the canonical backlog:
 
 1. Inspect existing contributor guidance, integrations, issue identifiers in branch or pull-request history, and available external capabilities before asking how work is tracked.
 2. Keep the external tracker as the single source of truth. Do not copy its backlog or issue bodies into `.agents/sessions/DEFERRED.md` or create another durable mirror in the repository.
-3. Keep and tailor the relevant file under `.agents/mcp/`; remove tracker capability files the project does not use. Grant the narrowest workspace, team, project, and write access that supports the adopted workflow.
+3. Document the adopted tracker and required access boundary in `.agents/WORKFLOW.md`. Grant the narrowest workspace, team, project, and write access that supports the adopted workflow.
 4. Document the issue-to-branch-to-pull-request lifecycle in `.agents/WORKFLOW.md`, including actual status transitions and any existing automation.
 5. Use one branch per work item by default and include its stable identifier. Choose the branch prefix from the change type, such as `feature/ENG-123-add-export`, `fix/ENG-124-handle-empty-response`, or `chore/ENG-125-update-dependencies`; do not classify every tracked item as a chore.
 6. Fetch current work-item details through the configured capability before implementation. Link the pull request to the canonical item and update external state only when the corresponding work actually begins or completes.
@@ -140,7 +139,7 @@ When the project adopts hosted secrets, deployment, data, or documentation servi
 2. Identify the canonical source for each kind of state. Keep code, migrations, deployment configuration, and docs-as-code in the repository unless the project explicitly establishes another source.
 3. If Doppler is the canonical secret manager, document its outbound syncs and avoid separately managed copies in Vercel, Supabase, CI, or other destinations.
 4. Document service relationships and environment boundaries in `.agents/ARCHITECTURE.md`; put exact verified local or CI commands in `.agents/COMMANDS.md`.
-5. Keep and tailor only the relevant files under `.agents/mcp/`. These files describe capability intent and least-privilege scope; they do not contain credentials or silently install host integrations.
+5. Document adopted capabilities and least-privilege boundaries in `.agents/ARCHITECTURE.md` or `.agents/WORKFLOW.md`. Do not store credentials or silently install host integrations.
 6. Prefer project-scoped, read-only, development access for inspection. Require explicit authorization for secret writes, deployments, production access, database mutations, domain changes, or authenticated documentation edits.
 7. Verify external changes through the provider after making them. If access or permission is unavailable, report the limitation and record genuine unresolved setup work in `.agents/sessions/DEFERRED.md`.
 
@@ -152,7 +151,7 @@ Reconcile tools only after determining which project workflows and external capa
 2. Separate installer prerequisites, project command dependencies, provider CLIs, local MCP runtimes, and remote MCP connections. A remote OAuth MCP server does not imply that its provider CLI must be installed.
 3. Verify each required executable with a non-mutating lookup and version command, using `command -v` on POSIX systems or `Get-Command` on PowerShell where appropriate.
 4. Prefer repository-pinned development dependencies and existing tool managers over global installations. Preserve the project's package manager and lockfile rather than introducing another one for a CLI.
-5. Document only adopted, verified invocations and version constraints in `.agents/COMMANDS.md`. Keep host-specific MCP configuration as a thin adapter to `.agents/mcp/` capability intent.
+5. Document only adopted, verified invocations and version constraints in `.agents/COMMANDS.md`. Keep host-specific MCP configuration outside repository context unless the project deliberately owns it.
 6. Do not install Homebrew, a language runtime, global npm packages, provider CLIs, credentials, or user-level MCP configuration without explicit authorization. Do not treat the presence of a capability template as authorization to connect it.
 7. If a required project command cannot run because a tool or authenticated capability is unavailable, report the exact gap and record genuine unresolved setup work in `.agents/sessions/DEFERRED.md`. Do not claim the command or integration was verified.
 
@@ -193,10 +192,10 @@ Bootstrap must establish how the target repository checks third-party components
 ## Avoid
 
 - Asking what language or framework the repository uses when manifests make that clear.
-- Treating presets as higher authority than the existing codebase.
+- Treating a Git preset as higher authority than the existing codebase.
 - Silently choosing between conflicting existing and bootstrap policies.
-- Keeping every bootstrap preset in the target repository.
-- Leaving empty preset, skill, or MCP directories after removing their template files.
+- Keeping both Git workflow presets in the target repository after selection.
+- Leaving empty preset or skill directories after removing their template files.
 - Leaving scaffold instructions in canonical files instead of replacing them with project facts.
 - Turning `.agents/sessions/DEFERRED.md` into a per-task plan or a mirror of the product backlog.
 - Removing preserved configuration before migration has been reviewed and validated.
