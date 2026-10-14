@@ -70,16 +70,15 @@ CLAUDE.md                 compatibility pointer
 ├── SECURITY.md           code and dependency vulnerability audit procedure
 ├── sessions/
 │   ├── ACTIVE.md         one immediate implementation handoff
-│   ├── DEFERRED.md       optional future slices; not authorization
+│   ├── DEFERRED.md       unresolved follow-ups and optional future slices
 │   └── archive/          completed session briefs
-├── todos/                persistent agent-managed setup follow-ups
 ├── presets/              candidate engineering conventions
 └── mcp/                  candidate external capabilities
 ```
 
 The first agent replaces generic scaffolds with facts discovered from the target repository and removes irrelevant presets and capabilities.
 
-`ACTIVE.md` is the single workspace-level handoff, including in monorepos. Deferred slices remain planning input, completed briefs remain historical evidence, and external trackers can remain the canonical backlog.
+`ACTIVE.md` is the single workspace-level handoff, including in monorepos. Deferred items remain planning input, completed briefs remain historical evidence, and external trackers can remain the canonical backlog.
 
 ## Defaults and Overrides
 

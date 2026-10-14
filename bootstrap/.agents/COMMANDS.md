@@ -8,7 +8,7 @@ Identify the tooling required to run the commands the project actually adopts. R
 
 Document only applicable commands. Possible sections include install, development, build, lint, format, typecheck or compile, unit tests, integration tests, end-to-end tests, single-test invocation, dependency audit, static security analysis, secret scanning, database, migrations, fast verification, full verification, and release.
 
-For code-bearing repositories, account explicitly for automated behavior verification and relevant static checks. If a category is absent, document the reason or record the unresolved work in `.agents/todos/TODO.md`; do not omit it silently. Documentation, configuration, generated-code, and similar repositories may substitute build, schema, link, integration, or other focused validation where unit tests are not the right fit.
+For code-bearing repositories, account explicitly for automated behavior verification and relevant static checks. If a category is absent, document the reason or record the unresolved work in `.agents/sessions/DEFERRED.md`; do not omit it silently. Documentation, configuration, generated-code, and similar repositories may substitute build, schema, link, integration, or other focused validation where unit tests are not the right fit.
 
 For security checks, follow `.agents/SECURITY.md`. Prefer existing or ecosystem-native tools, inspect resolved dependency versions, and distinguish checks that need current network advisory data from fully local commands.
 

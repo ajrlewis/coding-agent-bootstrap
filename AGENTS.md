@@ -23,10 +23,8 @@ Write conversational replies in plain, direct language. Use short sentences, act
 - `.agents/DOCTOR.md` - refresh and consistency checks for agent context; use it when asked to doctor, lint, refresh, or audit the agent files.
 - `.agents/SECURITY.md` - dependency and code vulnerability audit procedure; use it for security reviews and vulnerability checking.
 - `.agents/sessions/ACTIVE.md` - the only active implementation handoff.
-- `.agents/sessions/DEFERRED.md` - optional planning input that does not authorize implementation.
+- `.agents/sessions/DEFERRED.md` - unresolved follow-up work and optional planning input that does not authorize implementation.
 - `.agents/sessions/archive/` - completed session briefs retained as historical evidence.
-- `.agents/todos/TODO.md` - active agent-managed follow-up work.
-- `.agents/todos/DONE.md` - archive of completed agent-managed follow-up work.
 - `.agents/presets/` - adopted engineering conventions.
 - `.agents/skills/` - recurring specialized procedures.
 - `.agents/mcp/` - desired external capabilities for agents.
@@ -35,4 +33,4 @@ Always read `AGENTS.md`. Read `.agents/sessions/ACTIVE.md` when asked to continu
 
 ## Definition Of Done
 
-Run relevant checks from `.agents/COMMANDS.md`, verify the requested outcome, review the diff, and update durable context when facts changed. When an active session is completed, archive its brief, reconcile deferred work, and replace it with the next explicitly selected brief or state that no objective is selected. Archive completed setup follow-ups in `.agents/todos/DONE.md` and record discovered out-of-scope setup work in `.agents/todos/TODO.md`. Never invent the next priority or claim a check passed unless it was run.
+Run relevant checks from `.agents/COMMANDS.md`, verify the requested outcome, review the diff, and update durable context when facts changed. When an active session is completed, archive its brief, reconcile deferred work, and replace it with the next explicitly selected brief or state that no objective is selected. Record unresolved out-of-scope work in `.agents/sessions/DEFERRED.md` when it does not belong in the canonical issue tracker. Never invent the next priority or claim a check passed unless it was run.
