@@ -1,16 +1,19 @@
 # Coding Agent Rules
 
 ## 1. Think Before Coding
-Do not assume. Surface ambiguity. Understand the existing code and surrounding context before changing it.
+Inspect the existing code and surrounding context before changing it. Do not make silent assumptions. Surface ambiguity that could affect the outcome.
 
 ## 2. Keep It Simple
-Write the minimum code necessary. Avoid speculative abstractions, unnecessary flexibility, and premature generalization.
+Write the minimum code needed for the requested outcome. Avoid speculative abstractions, unnecessary flexibility, and premature generalization.
 
 ## 3. Make Surgical Changes
-Change only what the task requires. Preserve existing patterns. Do not refactor unrelated code.
+Change only what the task requires. Preserve existing patterns. Avoid unrelated refactors.
 
 ## 4. Work Toward Verifiable Outcomes
-Define what success means. Test the result. Do not declare completion without evidence.
+Define success before making changes. Run the relevant checks. Do not claim completion without evidence.
+
+## 5. Report Plainly
+Write conversational replies in plain, direct language. Use short sentences, active voice, and one idea per sentence. Follow ASD-STE100 roughly, not strictly. Preserve exact identifiers, file names, error strings, and numbers. Preserve every condition and uncertainty, including “if,” “unless,” and “not verified.” Do not simplify wording in a way that implies more certainty. This rule does not apply to code, comments, commit messages, or docstrings.
 
 ## Where To Look
 
