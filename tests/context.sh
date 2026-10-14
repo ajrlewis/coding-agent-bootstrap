@@ -28,6 +28,9 @@ for path in \
   .agents/sessions/ACTIVE.md \
   .agents/sessions/DEFERRED.md \
   .agents/sessions/archive/README.md \
+  .agents/presets/git/github-flow.md \
+  .agents/skills/release/SKILL.md \
+  .agents/mcp/github.md \
   bootstrap/AGENTS.md \
   bootstrap/CLAUDE.md \
   bootstrap/.agents/ARCHITECTURE.md \
@@ -71,6 +74,18 @@ do
   require_text bootstrap/AGENTS.md "$route"
 done
 
+for route in \
+  '.agents/presets/git/github-flow.md' \
+  '.agents/skills/release/SKILL.md' \
+  '.agents/mcp/github.md'
+do
+  require_text AGENTS.md "$route"
+done
+
+if grep -F '.agents/skills/' bootstrap/AGENTS.md >/dev/null; then
+  fail "payload AGENTS.md routes to an uninstalled skills directory"
+fi
+
 bootstrap_route='If `.agents/BOOTSTRAP.md` exists'
 if grep -F "$bootstrap_route" AGENTS.md >/dev/null; then
   fail "root AGENTS.md retains the payload-only bootstrap route"
@@ -85,8 +100,8 @@ fi
 [ ! -e bootstrap/.agents/mcp ] || fail "payload contains unselected MCP templates"
 [ "$(find bootstrap/.agents/presets -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')" = "1" ] || fail "payload contains non-Git preset categories"
 
-[ "$(sed -n '1p' .agents/VERSION)" = "6" ] || fail "root agent-context version is not 6"
-[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "8" ] || fail "payload version is not 8"
+[ "$(sed -n '1p' .agents/VERSION)" = "7" ] || fail "root agent-context version is not 7"
+[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "9" ] || fail "payload version is not 9"
 
 cmp .agents/DOCTOR.md bootstrap/.agents/DOCTOR.md >/dev/null || fail "root and payload doctor procedures differ"
 cmp .agents/SECURITY.md bootstrap/.agents/SECURITY.md >/dev/null || fail "root and payload security procedures differ"
