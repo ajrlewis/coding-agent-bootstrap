@@ -28,8 +28,6 @@ for path in \
   .agents/sessions/ACTIVE.md \
   .agents/sessions/DEFERRED.md \
   .agents/sessions/archive/README.md \
-  .agents/todos/TODO.md \
-  .agents/todos/DONE.md \
   bootstrap/AGENTS.md \
   bootstrap/CLAUDE.md \
   bootstrap/.agents/ARCHITECTURE.md \
@@ -41,8 +39,6 @@ for path in \
   bootstrap/.agents/sessions/ACTIVE.md \
   bootstrap/.agents/sessions/DEFERRED.md \
   bootstrap/.agents/sessions/archive/README.md \
-  bootstrap/.agents/todos/TODO.md \
-  bootstrap/.agents/todos/DONE.md \
   bootstrap/.agents/presets/architecture/monorepo.md \
   bootstrap/.agents/presets/ci/azure-pipelines.md \
   bootstrap/.agents/presets/database/snowflake.md \
@@ -66,9 +62,7 @@ for route in \
   '.agents/SECURITY.md' \
   '.agents/sessions/ACTIVE.md' \
   '.agents/sessions/DEFERRED.md' \
-  '.agents/sessions/archive/' \
-  '.agents/todos/TODO.md' \
-  '.agents/todos/DONE.md'
+  '.agents/sessions/archive/'
 do
   require_text AGENTS.md "$route"
   require_text bootstrap/AGENTS.md "$route"
@@ -80,20 +74,18 @@ if grep -F "$bootstrap_route" AGENTS.md >/dev/null; then
 fi
 require_text bootstrap/AGENTS.md "$bootstrap_route"
 
-legacy_todo_path='.agents/TODO.md'
-if grep -R -F "$legacy_todo_path" AGENTS.md README.md .agents bootstrap >/dev/null; then
-  fail "agent context contains the legacy TODO path"
+if grep -R -E '\.agents/(todos/|TODO\.md)' AGENTS.md README.md .agents bootstrap >/dev/null; then
+  fail "agent context contains a removed TODO path"
 fi
-[ ! -e .agents/TODO.md ] || fail "root legacy TODO file exists"
-[ ! -e bootstrap/.agents/TODO.md ] || fail "payload legacy TODO file exists"
+[ ! -e .agents/todos ] || fail "root TODO directory exists"
+[ ! -e bootstrap/.agents/todos ] || fail "payload TODO directory exists"
 
-[ "$(sed -n '1p' .agents/VERSION)" = "4" ] || fail "root agent-context version is not 4"
-[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "6" ] || fail "payload version is not 6"
+[ "$(sed -n '1p' .agents/VERSION)" = "5" ] || fail "root agent-context version is not 5"
+[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "7" ] || fail "payload version is not 7"
 
 cmp .agents/DOCTOR.md bootstrap/.agents/DOCTOR.md >/dev/null || fail "root and payload doctor procedures differ"
 cmp .agents/SECURITY.md bootstrap/.agents/SECURITY.md >/dev/null || fail "root and payload security procedures differ"
 cmp .agents/sessions/ACTIVE.md bootstrap/.agents/sessions/ACTIVE.md >/dev/null || fail "root and payload active-session defaults differ"
-cmp .agents/sessions/DEFERRED.md bootstrap/.agents/sessions/DEFERRED.md >/dev/null || fail "root and payload deferred-session defaults differ"
 cmp .agents/sessions/archive/README.md bootstrap/.agents/sessions/archive/README.md >/dev/null || fail "root and payload session archive guidance differs"
 if cmp .agents/ARCHITECTURE.md bootstrap/.agents/ARCHITECTURE.md >/dev/null; then
   fail "root development architecture matches the target payload"

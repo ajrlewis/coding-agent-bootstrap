@@ -13,7 +13,7 @@ Changes to `coding-agent-bootstrap` should follow this loop:
 9. Inspect the diff and installed result for accidental root-context leakage.
 10. Update README or agent-managed context if behavior or architecture changed.
 11. When an active session is completed, update durable documentation, archive its brief with completion metadata, reconcile deferred work, and replace `ACTIVE.md` with the next explicitly selected brief or state that no objective is selected. Prefer doing this in the implementation pull request; never invent the next priority.
-12. Move completed setup follow-ups to `.agents/todos/DONE.md` and record new agent-managed setup work in `.agents/todos/TODO.md`. Keep optional future product slices in `.agents/sessions/DEFERRED.md`, where they remain planning input rather than implementation authorization.
+12. Record unresolved follow-up work in `.agents/sessions/DEFERRED.md` when it does not belong in the canonical issue tracker. Deferred items remain planning input rather than implementation authorization.
 
 Use the GitHub Flow preset for repository changes, including merging the latest `origin/main` before pushing or updating a PR and rerunning relevant verification afterward. Do not add a runtime dependency unless the behavior genuinely requires one.
 

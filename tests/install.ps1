@@ -110,8 +110,6 @@ try {
         ".agents\sessions\ACTIVE.md",
         ".agents\sessions\DEFERRED.md",
         ".agents\sessions\archive\README.md",
-        ".agents\todos\TODO.md",
-        ".agents\todos\DONE.md",
         ".agents\presets\architecture\monorepo.md",
         ".agents\presets\git\azure-devops.md",
         ".agents\presets\ci\azure-pipelines.md",
@@ -137,8 +135,11 @@ try {
     if (Test-Path -LiteralPath (Join-Path $repository "NEXT_SESSION.md")) {
         Fail-Test "generic payload installed a competing NEXT_SESSION.md"
     }
-    if ((Get-Content -LiteralPath (Join-Path $repository ".agents\VERSION") -Raw).Trim() -ne "6") {
-        Fail-Test "payload version is not 6"
+    if (Test-Path -LiteralPath (Join-Path $repository ".agents\todos")) {
+        Fail-Test "removed TODO directory was installed"
+    }
+    if ((Get-Content -LiteralPath (Join-Path $repository ".agents\VERSION") -Raw).Trim() -ne "7") {
+        Fail-Test "payload version is not 7"
     }
     Assert-NoStagingFiles $repository
 
