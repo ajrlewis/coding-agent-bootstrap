@@ -5,7 +5,8 @@
 ## Components
 
 - Root `AGENTS.md`, `CLAUDE.md`, and `.agents/` configure agents developing this repository.
-- `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; its doctor and security procedures, preset library, and MCP library are reusable discovery material.
+- `bootstrap/` is the complete payload copied into target repositories. Its project-context files are temporary writing scaffolds; only the Git workflow defaults remain as selectable presets.
+- `catalog/` contains optional technology presets and MCP capability templates. It is source-repository reference material and is not copied into target repositories.
 - `install.sh` selects the local payload when run from a checkout or fetches a temporary checkout when run from standard input. It preserves direct conflicts under `.coding-agent-bootstrap/existing/` by default; `--merge` remains a compatibility option.
 - `install.ps1` provides equivalent local and remote Windows behavior, with `-Merge` retained for compatibility; `install.bat` is its local compatibility entrypoint.
 - `tests/install.sh` and `tests/install.ps1` exercise platform-specific installation, Git initialization, branch creation, default merge-preservation, refusal, and rollback behavior.
@@ -30,7 +31,7 @@
 - Exact project commands live in the relevant `.agents/COMMANDS.md`, not presets or skills.
 - Only the payload contains `.agents/BOOTSTRAP.md`; installed repositories remove it and its `AGENTS.md` routing paragraph after first-run configuration.
 - One workspace-level `.agents/sessions/ACTIVE.md` owns the immediate implementation handoff; unresolved follow-up work, optional future work, and completed session evidence remain separate under `.agents/sessions/`.
-- Installed target repositories should keep only adopted presets, project-specific skills, and desired MCP capabilities.
+- Installed target repositories should keep only the adopted Git workflow preset and any project-specific skills or capability guidance they deliberately add.
 - Default installation must preserve existing `AGENTS.md`, `CLAUDE.md`, or `.agents/` before replacement and retain recoverable state on failure.
 - Installers initialize Git when needed. From a committed default branch they create and switch to `chore/coding-agent-bootstrap` unless the user supplies the explicit current-branch override; unborn repositories and existing feature branches remain on their current branch.
 - Installer runtime requirements stay limited to Git and the host script environment; tools needed only by an adopted target-project workflow are discovered after installation.

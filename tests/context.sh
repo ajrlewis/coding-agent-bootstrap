@@ -39,17 +39,20 @@ for path in \
   bootstrap/.agents/sessions/ACTIVE.md \
   bootstrap/.agents/sessions/DEFERRED.md \
   bootstrap/.agents/sessions/archive/README.md \
-  bootstrap/.agents/presets/architecture/monorepo.md \
-  bootstrap/.agents/presets/ci/azure-pipelines.md \
-  bootstrap/.agents/presets/database/snowflake.md \
-  bootstrap/.agents/presets/database/sql-server.md \
   bootstrap/.agents/presets/git/github-flow.md \
   bootstrap/.agents/presets/git/azure-devops.md \
-  bootstrap/.agents/presets/infrastructure/bicep.md \
-  bootstrap/.agents/presets/observability/logging.md \
-  bootstrap/.agents/presets/quality/api-documentation.md \
-  bootstrap/.agents/presets/quality/testing.md \
-  bootstrap/.agents/presets/tooling/turborepo.md
+  catalog/README.md \
+  catalog/presets/architecture/monorepo.md \
+  catalog/presets/ci/azure-pipelines.md \
+  catalog/presets/database/snowflake.md \
+  catalog/presets/database/sql-server.md \
+  catalog/presets/infrastructure/bicep.md \
+  catalog/presets/observability/logging.md \
+  catalog/presets/quality/api-documentation.md \
+  catalog/presets/quality/testing.md \
+  catalog/presets/tooling/turborepo.md \
+  catalog/mcp/github.md \
+  catalog/mcp/linear.md
 do
   require_file "$path"
 done
@@ -79,9 +82,11 @@ if grep -R -E '\.agents/(todos/|TODO\.md)' AGENTS.md README.md .agents bootstrap
 fi
 [ ! -e .agents/todos ] || fail "root TODO directory exists"
 [ ! -e bootstrap/.agents/todos ] || fail "payload TODO directory exists"
+[ ! -e bootstrap/.agents/mcp ] || fail "payload contains unselected MCP templates"
+[ "$(find bootstrap/.agents/presets -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')" = "1" ] || fail "payload contains non-Git preset categories"
 
-[ "$(sed -n '1p' .agents/VERSION)" = "5" ] || fail "root agent-context version is not 5"
-[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "7" ] || fail "payload version is not 7"
+[ "$(sed -n '1p' .agents/VERSION)" = "6" ] || fail "root agent-context version is not 6"
+[ "$(sed -n '1p' bootstrap/.agents/VERSION)" = "8" ] || fail "payload version is not 8"
 
 cmp .agents/DOCTOR.md bootstrap/.agents/DOCTOR.md >/dev/null || fail "root and payload doctor procedures differ"
 cmp .agents/SECURITY.md bootstrap/.agents/SECURITY.md >/dev/null || fail "root and payload security procedures differ"
