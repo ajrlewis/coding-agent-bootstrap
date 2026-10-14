@@ -26,7 +26,6 @@ Write conversational replies in plain, direct language. Use short sentences, act
 - `.agents/sessions/DEFERRED.md` - unresolved follow-up work and optional planning input that does not authorize implementation.
 - `.agents/sessions/archive/` - completed session briefs retained as historical evidence.
 - `.agents/presets/git/` - Git workflow defaults; keep only the adopted preset.
-- `.agents/skills/` - recurring specialized procedures, when the project defines them.
 
 If `.agents/BOOTSTRAP.md` exists, complete it before normal project work. During bootstrap, preserve `CLAUDE.md`; project-specific context belongs in the routed `.agents/` files. Remove this paragraph from `AGENTS.md` when bootstrap is complete.
 

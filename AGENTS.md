@@ -17,17 +17,17 @@ Write conversational replies in plain, direct language. Use short sentences, act
 
 ## Where To Look
 
-- `.agents/WORKFLOW.md` - how development work normally proceeds.
-- `.agents/COMMANDS.md` - canonical known-good commands.
-- `.agents/ARCHITECTURE.md` - system structure, boundaries, and invariants.
+- `.agents/WORKFLOW.md` - the project's development process.
+- `.agents/COMMANDS.md` - canonical verified commands.
+- `.agents/ARCHITECTURE.md` - system boundaries and invariants.
 - `.agents/DOCTOR.md` - refresh and consistency checks for agent context; use it when asked to doctor, lint, refresh, or audit the agent files.
 - `.agents/SECURITY.md` - dependency and code vulnerability audit procedure; use it for security reviews and vulnerability checking.
 - `.agents/sessions/ACTIVE.md` - the only active implementation handoff.
 - `.agents/sessions/DEFERRED.md` - unresolved follow-up work and optional planning input that does not authorize implementation.
 - `.agents/sessions/archive/` - completed session briefs retained as historical evidence.
-- `.agents/presets/` - adopted engineering conventions.
-- `.agents/skills/` - recurring specialized procedures.
-- `.agents/mcp/` - desired external capabilities for agents.
+- `.agents/presets/git/github-flow.md` - the adopted Git workflow.
+- `.agents/skills/release/SKILL.md` - the repository release procedure.
+- `.agents/mcp/github.md` - the desired GitHub capability and access boundary.
 
 Always read `AGENTS.md`. Read `.agents/sessions/ACTIVE.md` when asked to continue, pick up, implement the next session, or choose the next task, plus relevant product specifications and nested `AGENTS.md` files for local constraints. Do not implement deferred work unless the user explicitly selects an item or asks for planning; archived briefs are historical only. Current code, tests, architecture, and product specifications override stale briefs. If the active brief is complete, stale, contradictory, or selects no objective, report that state and await direction instead of inferring authorization from deferred or archived content. A monorepo has one workspace-level active session; nested `AGENTS.md` files add durable local rules, not active work queues.
 

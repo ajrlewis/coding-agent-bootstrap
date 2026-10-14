@@ -136,8 +136,8 @@ try {
     if (Test-Path -LiteralPath (Join-Path $repository ".agents\mcp")) {
         Fail-Test "optional MCP catalogue was installed"
     }
-    if ((Get-Content -LiteralPath (Join-Path $repository ".agents\VERSION") -Raw).Trim() -ne "8") {
-        Fail-Test "payload version is not 8"
+    if ((Get-Content -LiteralPath (Join-Path $repository ".agents\VERSION") -Raw).Trim() -ne "9") {
+        Fail-Test "payload version is not 9"
     }
     Assert-NoStagingFiles $repository
 
